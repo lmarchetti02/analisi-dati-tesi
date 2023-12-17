@@ -127,6 +127,9 @@ namespace graphs
 
         if (verbose)
             printf("INFO - Canvases created.\n");
+
+        TRootCanvas *rc = (TRootCanvas *)canvas_energy_spectrum->GetCanvasImp();
+        rc->Connect("CloseWindow()", "TApplication", gApplication, "Terminate()");
     }
 
     void Histograms::destroy_histograms()

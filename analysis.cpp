@@ -6,6 +6,8 @@
 #include "TTree.h"
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TApplication.h"
+#include "TRootCanvas.h"
 
 #include "include/data.hh"
 #include "include/graphs.hh"
@@ -15,8 +17,11 @@ using std::cout;
 
 bool verbose = false;
 
-void analysis(const char *file_name, const char *verbosity = "")
+int main(int argc, char **argv)
 {
+    TApplication app("app", &argc, argv);
+    const char *file_name = "../results/output0.root";
+    const char *verbosity = "";
     // SET VERBOSITY
     // -------------------------------------------------------------------
     if (!strcmp(verbosity, "-v"))
@@ -33,7 +38,7 @@ void analysis(const char *file_name, const char *verbosity = "")
     if (!results_file->IsOpen())
     {
         cout << "Error opening file " << file_name << "\n";
-        return;
+        return 1;
     }
 
     TTree *info_tree, *hits_tree;
@@ -41,13 +46,13 @@ void analysis(const char *file_name, const char *verbosity = "")
     if (!info_tree)
     {
         cout << "Error loading TTree Info\n";
-        return;
+        return 1;
     }
     hits_tree = static_cast<TTree *>(results_file->Get("Event"));
     if (!hits_tree)
     {
         cout << "Error loading TTree Event\n";
-        return;
+        return 1;
     }
     // -------------------------------------------------------------------
 
@@ -109,4 +114,7 @@ void analysis(const char *file_name, const char *verbosity = "")
     }
     hist.show_histograms();
     // -------------------------------------------------------------------
+
+    app.Run();
+    return 0;
 }

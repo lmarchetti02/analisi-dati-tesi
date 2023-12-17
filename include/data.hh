@@ -15,7 +15,9 @@ namespace data
     struct Info
     {
         int n_pixel;
-        double pixel_dimensions[3];
+        double pixel_dimensions[2];
+        int n_subpixel;
+        double subpixel_dimensions[2];
         int n_events;
     };
 
@@ -33,9 +35,11 @@ namespace data
         Info info;
 
         info_tree->SetBranchAddress("Pixel N", &info.n_pixel);
-        info_tree->SetBranchAddress("Pixels x-dim", &info.pixel_dimensions[0]);
-        info_tree->SetBranchAddress("Pixels y-dim", &info.pixel_dimensions[1]);
-        info_tree->SetBranchAddress("Pixels z-dim", &info.pixel_dimensions[2]);
+        info_tree->SetBranchAddress("Pixels xy-dim", &info.pixel_dimensions[0]);
+        info_tree->SetBranchAddress("Pixels z-dim", &info.pixel_dimensions[1]);
+        info_tree->SetBranchAddress("Subpixel N", &info.n_subpixel);
+        info_tree->SetBranchAddress("Subpixels xy-dim", &info.subpixel_dimensions[0]);
+        info_tree->SetBranchAddress("Subpixels z-dim", &info.subpixel_dimensions[1]);
         info_tree->SetBranchAddress("Event N", &info.n_events);
 
         if (verbose)
@@ -44,8 +48,8 @@ namespace data
         info_tree->GetEntry(0);
         cout << "Number of pixels = " << info.n_pixel << "\n";
         cout << "Pixel x-dimension = " << info.pixel_dimensions[0] << "\n";
-        cout << "Pixel y-dimension = " << info.pixel_dimensions[1] << "\n";
-        cout << "Pixel z-dimension = " << info.pixel_dimensions[2] << "\n";
+        cout << "Pixel y-dimension = " << info.pixel_dimensions[0] << "\n";
+        cout << "Pixel z-dimension = " << info.pixel_dimensions[1] << "\n";
         cout << "Number of events = " << info.n_events << "\n";
 
         return info;
