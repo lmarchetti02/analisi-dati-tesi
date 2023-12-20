@@ -15,7 +15,7 @@ graphs::Histograms::Histograms(int N)
     hist_energy_pixels = new TH2D("TH2D pixel energy", "Energy per pixel (no charge sharing)", N, -0.5, N - 0.5, N, -0.5, N - 0.5);
     hist_energy_pixels_cs = new TH2D("TH2D pixel energy CS", "Energy per pixel (with charge sharing)", N, -0.5, N - 0.5, N, -0.5, N - 0.5);
 
-    printf("INFO - Histograms created.\n");
+    printf("INFO - Histograms created.\n\n");
 }
 
 graphs::Histograms::~Histograms()
@@ -42,20 +42,21 @@ graphs::Histograms::~Histograms()
         printf("INFO - Histograms destroyed.\n");
 }
 
-void graphs::Histograms::fill_histograms(int N, bool CS, bool print)
+void graphs::Histograms::fill_histograms(data::Entry entry, int N, bool CS, bool print)
 {
     if (print)
-        printf("Event ID = %i\n", event_id);
+        printf("Event ID = %i\n", entry.event_id);
 
     double total_energy = 0;
-    int limit = (!CS) ? pixel_energy->size() : pixel_energy->size();
+    int limit = (!CS) ? entry.pixel_energy.size() : entry.pixel_energy_cs.size();
     for (int i = 0; i < limit; i++)
     {
-        double energy = (!CS) ? pixel_energy->at(i) : pixel_energy_cs->at(i);
+        double energy = (!CS) ? entry.pixel_energy.at(i) : entry.pixel_energy_cs.at(i);
+
         total_energy += energy;
         (!CS) ? hist_energy_spectrum->Fill(energy) : hist_energy_spectrum_cs->Fill(energy);
 
-        int ID = (!CS) ? id_pixel->at(i) : id_pixel_cs->at(i);
+        int ID = (!CS) ? entry.id_pixel.at(i) : entry.id_pixel_cs.at(i);
         int ID_y = ID / N;
         int ID_x = ID - ID_y * N;
         (!CS) ? hist_energy_pixels->Fill(ID_x, ID_y, energy) : hist_energy_pixels_cs->Fill(ID_x, ID_y, energy);

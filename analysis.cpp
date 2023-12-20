@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <tuple>
 
 #include "TFile.h"
 #include "TTree.h"
@@ -11,11 +12,12 @@
 
 int main(int argc, char **argv)
 {
+    printf("\033c");
     bool verbose = false;
 
     TApplication app("app", &argc, argv);
     const char *file_name = "../results/output0.root";
-    const char *verbosity = "";
+    const char *verbosity = (argc == 1) ? "" : argv[1];
 
     // OPEN FILE & GET TREES
     // -------------------------------------------------------------------
@@ -33,6 +35,7 @@ int main(int argc, char **argv)
         printf("Error loading TTree Info\n");
         return 1;
     }
+
     event_tree = static_cast<TTree *>(results_file->Get("Event"));
     if (!event_tree)
     {
@@ -66,15 +69,25 @@ int main(int argc, char **argv)
             break;
 
         event_tree->GetEntry(i);
-        printf("Entry number = %i\n", i);
+        if (i % 10000 == 0)
+            printf("Entry number = %i\n", i);
+
+        data::Entry entry = event.get_entry();
 
         if (choice != 'g')
         {
-            hist.fill_histograms(info.get_n_pixel(), false, true);
-            hist.fill_histograms(info.get_n_pixel(), true, true);
+            printf("\033c");
+            printf("Entry number = %i\n\n", i);
+            printf("NO CHARGE SHARING\n");
+            printf("-----------------\n");
+            hist.fill_histograms(entry, info.get_n_pixel(), false, true);
+
+            printf("\nWITH CHARGE SHARING\n");
+            printf("-------------------\n");
+            hist.fill_histograms(entry, info.get_n_pixel(), true, true);
 
             // CHOICE
-            printf("Type:\n");
+            printf("\nType:\n");
             printf("- 's' to stop\n");
             printf("- 'g' to go until the end (no print)\n");
             printf("- anything else to continue\n");
@@ -83,11 +96,18 @@ int main(int argc, char **argv)
                 continue;
         }
 
-        hist.fill_histograms(info.get_n_pixel(), false);
-        hist.fill_histograms(info.get_n_pixel(), true);
+        hist.fill_histograms(entry, info.get_n_pixel(), false);
+        hist.fill_histograms(entry, info.get_n_pixel(), true);
+
+        event.clearEntry(entry);
     }
+
     hist.show_histograms();
     // -------------------------------------------------------------------
+
+    results_file->Close();
+    delete results_file;
+    results_file = nullptr;
 
     app.Run();
     return 0;

@@ -3,12 +3,15 @@
 #include "TCanvas.h"
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TTree.h"
 
 #include "data.hh"
 
 namespace graphs
 {
-    class Histograms : public data::Event
+    using namespace std;
+
+    class Histograms
     {
     private:
         TH1D *hist_energy_spectrum;
@@ -28,7 +31,7 @@ namespace graphs
         Histograms(int N);
         ~Histograms();
 
-        void fill_histograms(int N, bool CS, bool print = false);
+        void fill_histograms(data::Entry entry, int N, bool CS, bool print = false);
         void show_histograms();
 
         static void set_verbose(bool value) { verbose = value; }
