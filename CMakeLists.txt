@@ -12,10 +12,10 @@ find_package(ROOT 6.16 CONFIG REQUIRED)
 include_directories(${PROJECT_SOURCE_DIR}/include)
 
 # compile every source and header file in project directory
-file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cc)
+file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cpp)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 
 # Create the main program using the library.
-add_executable(analisi analysis.cpp ${souces} ${headers})
+add_executable(analisi analysis.cpp ${sources} ${headers})
 target_link_libraries(analisi PUBLIC ROOT::Core ROOT::Graf ROOT::Hist ROOT::Tree ROOT::Gpad ROOT::RIO)
 #-----------------------------------------------------------------------
