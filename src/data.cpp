@@ -1,5 +1,7 @@
 #include "data.hh"
 
+#include "constants.hh"
+
 bool data::Info::verbose = false;
 bool data::Event::verbose = false;
 
@@ -14,7 +16,7 @@ data::Info::Info(TTree *info_tree)
     info_tree->SetBranchAddress("Event N", &n_events);
     info_tree->SetBranchAddress("Beam Width", &beam_width);
 
-    printf("INFO - Loaded simulation info from tree.\n\n");
+    printf("%sINFO - Loaded simulation info from tree.%s\n\n", INFO_COLOR, END_COLOR);
 
     info_tree->GetEntry(0);
     printf("Number of pixels = %i\n", n_pixel);
@@ -32,7 +34,7 @@ data::Event::Event(TTree *hits_tree)
     hits_tree->SetBranchAddress("ID CS", &id_pixel_cs);
     hits_tree->SetBranchAddress("Energy CS", &pixel_energy_cs);
 
-    printf("\nINFO - Loaded hits info from tree.\n");
+    printf("\n%sINFO - Loaded hits info from tree.%s\n", INFO_COLOR, END_COLOR);
 }
 
 data::Event::~Event()

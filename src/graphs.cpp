@@ -3,6 +3,8 @@
 #include "TRootCanvas.h"
 #include "TApplication.h"
 
+#include "constants.hh"
+
 bool graphs::Histograms::verbose = false;
 
 graphs::Histograms::Histograms(int N)
@@ -15,7 +17,7 @@ graphs::Histograms::Histograms(int N)
     hist_energy_pixels = new TH2D("TH2D pixel energy", "Energy per pixel (no charge sharing)", N, -0.5, N - 0.5, N, -0.5, N - 0.5);
     hist_energy_pixels_cs = new TH2D("TH2D pixel energy CS", "Energy per pixel (with charge sharing)", N, -0.5, N - 0.5, N, -0.5, N - 0.5);
 
-    printf("INFO - Histograms created.\n\n");
+    printf("%sINFO - Histograms created.%s\n\n", INFO_COLOR, END_COLOR);
 }
 
 graphs::Histograms::~Histograms()
@@ -60,7 +62,8 @@ void graphs::Histograms::fill_histograms(data::Entry entry, int N, bool CS, bool
         int ID_y = ID / N;
         int ID_x = ID - ID_y * N;
         if (verbose)
-            printf("ID_x = %i; ID_y = %i\n", ID_x, ID_y);
+            printf("DEBUG - ID_x = %i; ID_y = %i\n", ID_x, ID_y);
+
         (!CS) ? hist_energy_pixels->Fill(ID_x, ID_y, energy) : hist_energy_pixels_cs->Fill(ID_x, ID_y, energy);
 
         if (print)

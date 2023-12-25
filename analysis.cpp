@@ -9,6 +9,7 @@
 
 #include "data.hh"
 #include "graphs.hh"
+#include "constants.hh"
 
 int main(int argc, char *argv[])
 {
@@ -27,7 +28,7 @@ int main(int argc, char *argv[])
     TFile *results_file = new TFile(file_name, "READ");
     if (!results_file->IsOpen())
     {
-        printf("Error opening file %s\n", file_name);
+        printf("%sError opening file %s%s\n", ERROR_COLOR, file_name, END_COLOR);
         return 1;
     }
 
@@ -35,14 +36,14 @@ int main(int argc, char *argv[])
     info_tree = static_cast<TTree *>(results_file->Get("Info"));
     if (!info_tree)
     {
-        printf("Error loading TTree Info\n");
+        printf("%sError loading TTree Info%s\n", ERROR_COLOR, END_COLOR);
         return 1;
     }
 
     event_tree = static_cast<TTree *>(results_file->Get("Event"));
     if (!event_tree)
     {
-        printf("Error loading TTree Event\n");
+        printf("%sError loading TTree Event%s\n", ERROR_COLOR, END_COLOR);
         return 1;
     }
     // -------------------------------------------------------------------
@@ -81,11 +82,11 @@ int main(int argc, char *argv[])
         {
             (i != 0) ? printf("\033c") : printf("");
             printf("Entry number = %i\n\n", i);
-            printf("NO CHARGE SHARING\n");
+            printf("%sNO CHARGE SHARING%s\n", BOLD, END_COLOR);
             printf("-----------------\n");
             hist.fill_histograms(entry, info.get_n_pixel(), false, true);
 
-            printf("\nWITH CHARGE SHARING\n");
+            printf("\n%sWITH CHARGE SHARING%s\n", BOLD, END_COLOR);
             printf("-------------------\n");
             hist.fill_histograms(entry, info.get_n_pixel(), true, true);
 
