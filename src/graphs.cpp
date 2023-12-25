@@ -59,6 +59,8 @@ void graphs::Histograms::fill_histograms(data::Entry entry, int N, bool CS, bool
         int ID = (!CS) ? entry.id_pixel.at(i) : entry.id_pixel_cs.at(i);
         int ID_y = ID / N;
         int ID_x = ID - ID_y * N;
+        if (verbose)
+            printf("ID_x = %i; ID_y = %i\n", ID_x, ID_y);
         (!CS) ? hist_energy_pixels->Fill(ID_x, ID_y, energy) : hist_energy_pixels_cs->Fill(ID_x, ID_y, energy);
 
         if (print)

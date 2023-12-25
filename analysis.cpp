@@ -10,7 +10,7 @@
 #include "data.hh"
 #include "graphs.hh"
 
-int main(int argc, char **argv)
+int main(int argc, char *argv[])
 {
     printf("\033c");
     bool verbose = false;
@@ -54,7 +54,7 @@ int main(int argc, char **argv)
     graphs::Histograms hist(info.get_n_pixel());
 
     // set verbosity
-    if (!strcmp(verbosity, "-v"))
+    if (!strncmp(verbosity, "-v", 2))
     {
         data::Info::set_verbose(true);
         data::Event::set_verbose(true);
