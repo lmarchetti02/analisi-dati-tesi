@@ -79,24 +79,30 @@ void graphs::Histograms::show_histograms()
     canvas_energy_spectrum->Divide(2, 1);
     canvas_energy_spectrum->cd(1);
     hist_energy_spectrum->Draw();
+    hist_energy_spectrum->SetDirectory(nullptr);
     canvas_energy_spectrum->cd(2);
     hist_energy_spectrum_cs->Draw();
+    hist_energy_spectrum_cs->SetDirectory(nullptr);
     canvas_energy_spectrum->Update();
 
     canvas_total_energy = new TCanvas("Canvas total E", "Total Energy", 1000, 500);
     canvas_total_energy->Divide(2, 1);
     canvas_total_energy->cd(1);
     hist_total_energy->Draw();
+    hist_total_energy->SetDirectory(nullptr);
     canvas_total_energy->cd(2);
     hist_total_energy_cs->Draw();
+    hist_total_energy_cs->SetDirectory(nullptr);
     canvas_total_energy->Update();
 
     canvas_energy_pixel = new TCanvas("Canvas pixel E", "Energy per pixel", 1400, 500);
     canvas_energy_pixel->Divide(2, 1);
     canvas_energy_pixel->cd(1);
     hist_energy_pixels->Draw();
+    hist_energy_pixels->SetDirectory(nullptr);
     canvas_energy_pixel->cd(2);
     hist_energy_pixels_cs->Draw();
+    hist_energy_pixels_cs->SetDirectory(nullptr);
     canvas_energy_pixel->Update();
 
     if (verbose)

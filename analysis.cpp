@@ -69,14 +69,14 @@ int main(int argc, char **argv)
             break;
 
         event_tree->GetEntry(i);
-        if (i % 10000 == 0)
+        if (i % 10000 == 0 && i != 0)
             printf("Entry number = %i\n", i);
 
         data::Entry entry = event.get_entry();
 
         if (choice != 'g')
         {
-            printf("\033c");
+            (i != 0) ? printf("\033c") : printf("");
             printf("Entry number = %i\n\n", i);
             printf("NO CHARGE SHARING\n");
             printf("-----------------\n");
