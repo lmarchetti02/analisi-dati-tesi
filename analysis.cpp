@@ -14,10 +14,13 @@ int main(int argc, char **argv)
 {
     printf("\033c");
     bool verbose = false;
-
     TApplication app("app", &argc, argv);
-    const char *file_name = "../results/output0.root";
-    const char *verbosity = (argc == 1) ? "" : argv[1];
+
+    // get root file name and verbosity
+    char file_name[100];
+    strcpy(file_name, "../results/");
+    strcat(file_name, argv[1]);
+    const char *verbosity = (argc == 2) ? "" : argv[2];
 
     // OPEN FILE & GET TREES
     // -------------------------------------------------------------------
