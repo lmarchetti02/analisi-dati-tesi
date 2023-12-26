@@ -62,7 +62,7 @@ void graphs::Histograms::fill_histograms(data::Entry entry, int N, bool CS, bool
         int ID_y = ID / N;
         int ID_x = ID - ID_y * N;
         if (verbose)
-            printf("DEBUG - ID_x = %i; ID_y = %i\n", ID_x, ID_y);
+            printf("%sDEBUG - ID_x = %i; ID_y = %i%s\n", DEBUG_COLOR, ID_x, ID_y, END_COLOR);
 
         (!CS) ? hist_energy_pixels->Fill(ID_x, ID_y, energy) : hist_energy_pixels_cs->Fill(ID_x, ID_y, energy);
 
@@ -75,7 +75,7 @@ void graphs::Histograms::fill_histograms(data::Entry entry, int N, bool CS, bool
         printf("Total energy = %f GeV\n", total_energy);
 
     if (verbose)
-        printf("INFO - Filled histograms (no CS).\n");
+        printf("%s\nINFO - Filled histograms (no CS).%s\n", INFO_COLOR, END_COLOR);
 }
 
 void graphs::Histograms::show_histograms()
@@ -111,7 +111,7 @@ void graphs::Histograms::show_histograms()
     canvas_energy_pixel->Update();
 
     if (verbose)
-        printf("INFO - Canvases created.\n");
+        printf("%sINFO - Canvases created.%s\n", INFO_COLOR, END_COLOR);
 
     TRootCanvas *rc = (TRootCanvas *)canvas_energy_spectrum->GetCanvasImp();
     rc->Connect("CloseWindow()", "TApplication", gApplication, "Terminate()");
