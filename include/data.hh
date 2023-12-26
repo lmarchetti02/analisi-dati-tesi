@@ -7,6 +7,10 @@
 
 namespace data
 {
+    /**
+     * Class for reading and storing the
+     * info about the Geant4 simulation.
+     */
     class Info
     {
     private:
@@ -23,12 +27,19 @@ namespace data
         Info(TTree *info_tree);
         ~Info() = default;
 
+        // Returns the number of pixels.
         int get_n_pixel() const { return n_pixel; }
+        // Returns the number of subpixels.
         int get_n_subpixel() const { return n_subpixel; }
 
+        // Set verbosity of the class.
         static void set_verbose(bool value) { verbose = value; }
     };
 
+    /**
+     * Struct containing single rows
+     * of the Event TTree.
+     */
     struct Entry
     {
         Int_t event_id;
@@ -38,6 +49,10 @@ namespace data
         std::vector<Double_t> pixel_energy_cs;
     };
 
+    /**
+     * Class for reading and storing the
+     * results of the Geant4 simulation.
+     */
     class Event
     {
     private:
@@ -53,9 +68,10 @@ namespace data
         Event(TTree *hits_tree);
         ~Event();
 
-        Entry get_entry();
+        Entry get_entry() const;
         void clearEntry(Entry &entry) const;
 
+        // Set verbosity of the class.
         static void set_verbose(bool value) { verbose = value; }
     };
 } // namespace data

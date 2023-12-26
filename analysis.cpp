@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <tuple>
+#include <memory>
 
 #include "TFile.h"
 #include "TTree.h"
@@ -26,14 +26,14 @@ int main(int argc, char **argv)
 
     // OPEN FILE & GET TREES
     // -------------------------------------------------------------------
-    TFile *results_file = new TFile(file_name, "READ");
+    std::unique_ptr<TFile> results_file = std::make_unique<TFile>(file_name, "READ");
     if (!results_file->IsOpen())
     {
         printf("%sError opening file %s%s\n", ERROR_COLOR, file_name, END_COLOR);
         return 1;
     }
 
-    TTree *info_tree, *event_tree;
+    TTree *info_tree, *event_tree; // owned by TFile object
     info_tree = static_cast<TTree *>(results_file->Get("Info"));
     if (!info_tree)
     {
@@ -113,8 +113,6 @@ int main(int argc, char **argv)
     // -------------------------------------------------------------------
 
     results_file->Close();
-    delete results_file;
-    results_file = nullptr;
 
     app.Run();
     return 0;
