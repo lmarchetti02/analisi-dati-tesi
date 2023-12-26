@@ -10,6 +10,7 @@
 #include "data.hh"
 #include "graphs.hh"
 #include "constants.hh"
+#include "merge_pixels.hh"
 
 int main(int argc, char *argv[])
 {
@@ -77,6 +78,7 @@ int main(int argc, char *argv[])
             printf("Entry number = %i\n", i);
 
         data::Entry entry = event.get_entry();
+        entry = merge_pixel::merge(entry, 15, 45);
 
         if (choice != 'g')
         {
