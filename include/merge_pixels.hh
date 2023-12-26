@@ -65,22 +65,3 @@ namespace merge_pixel
         return {entry.event_id, m_id_pixel, m_pixel_energy, m_id_pixel_cs, m_pixel_energy_cs};
     }
 } // namespace merge_pixel
-
-// TFile *results_file = new TFile(file_name, "UPDATE");
-
-// Int_t event_id;
-// std::vector<Int_t> id;
-// std::vector<Double_t> energy;
-// std::vector<Int_t> id_cs;
-// std::vector<Double_t> energy_cs;
-
-// TTree *merged_tree = new TTree("Event Merged", "Event Merged");
-// merged_tree->Branch("Event ID", &event_id);
-// merged_tree->Branch("ID", &id);
-// merged_tree->Branch("Energy", &energy);
-// merged_tree->Branch("ID CS", &id_cs);
-// merged_tree->Branch("Energy CS", &energy_cs);
-
-// results_file->Close();
-// delete results_file;
-// results_file = nullptr;

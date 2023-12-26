@@ -12,7 +12,7 @@
 #include "constants.hh"
 #include "merge_pixels.hh"
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
     printf("\033c");
     bool verbose = false;
@@ -75,15 +75,16 @@ int main(int argc, char *argv[])
 
         event_tree->GetEntry(i);
         if (i % 10000 == 0 && i != 0)
-            printf("Entry number = %i\n", i);
+            printf("%sINFO - Entry number = %i%s\n", INFO_COLOR, i, END_COLOR);
 
         data::Entry entry = event.get_entry();
-        entry = merge_pixel::merge(entry, 15, 45);
+        entry = merge_pixel::merge(entry, info.get_n_pixel(), info.get_n_subpixel());
 
         if (choice != 'g')
         {
             (i != 0) ? printf("\033c") : printf("");
             printf("Entry number = %i\n\n", i);
+
             printf("%sNO CHARGE SHARING%s\n", BOLD, END_COLOR);
             printf("-----------------\n");
             hist.fill_histograms(entry, info.get_n_pixel(), false, true);

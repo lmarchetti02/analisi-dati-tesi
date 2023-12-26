@@ -23,7 +23,8 @@ namespace data
         Info(TTree *info_tree);
         ~Info() = default;
 
-        int get_n_pixel() const { return n_subpixel; }
+        int get_n_pixel() const { return n_pixel; }
+        int get_n_subpixel() const { return n_subpixel; }
 
         static void set_verbose(bool value) { verbose = value; }
     };
