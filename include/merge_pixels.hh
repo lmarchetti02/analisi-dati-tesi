@@ -10,7 +10,19 @@
 namespace merge_pixel
 {
 
-    void convert(std::map<Int_t, Double_t> map, std::vector<Int_t> &v_keys, std::vector<Double_t> &v_values)
+    /**
+     * Template for turing an `std::map` into two `std::vector`s,
+     * one with all the keys amd one with all the values.
+     *
+     * @tparam K The type of the keys.
+     * @tparam V The type of the values.
+     *
+     * @param[in] map The `std::map` to convert.
+     * @param[in] v_keys The reference to the vector of keys.
+     * @param[in] v_values The reference to the vector of values.
+     */
+    template <typename K, typename V>
+    void convert(std::map<K, V> map, std::vector<K> &v_keys, std::vector<V> &v_values)
     {
         for (auto &[key, value] : map)
         {
@@ -19,18 +31,28 @@ namespace merge_pixel
         }
     }
 
+    /**
+     * Function for merging the subpixels into the corresponding pixels.
+     *
+     * @param[in] entry The entry from the TTree "Event".
+     * @param[in] n_pixel The number of pixel per side.
+     * @param[in] n_subpixel The number of subpixels per side.
+     *
+     * @return The entry from the TTree "Event" with the merged data.
+     */
     data::Entry merge(data::Entry entry, int n_pixel, int n_subpixel)
     {
-        std::vector<Int_t> m_id_pixel;
-        std::vector<Double_t> m_pixel_energy;
-        std::vector<Int_t> m_id_pixel_cs;
-        std::vector<Double_t> m_pixel_energy_cs;
+        std::vector<Int_t> m_id_pixel{};
+        std::vector<Double_t> m_pixel_energy{};
+        std::vector<Int_t> m_id_pixel_cs{};
+        std::vector<Double_t> m_pixel_energy_cs{};
 
         std::map<Int_t, Double_t> no_cs{};
         std::map<Int_t, Double_t> with_cs{};
 
         int ratio = n_subpixel / n_pixel;
 
+        // no charge sharing
         for (int i = 0; i < entry.id_pixel.size(); i++)
         {
             int id_y = entry.id_pixel[i] / n_subpixel;
@@ -45,6 +67,7 @@ namespace merge_pixel
                 no_cs[id_new] += entry.pixel_energy[i];
         }
 
+        // with charge sharing
         for (int i = 0; i < entry.id_pixel_cs.size(); i++)
         {
             int id_y = entry.id_pixel_cs[i] / n_subpixel;
