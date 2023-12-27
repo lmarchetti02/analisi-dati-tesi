@@ -95,7 +95,10 @@ void graphs::Histograms::fill_histograms(data::Entry entry, int n_pixel, bool CS
         printf("Total energy = %f GeV\n", total_energy);
 
     if (verbose)
-        printf("%s\nINFO - Filled histograms (no CS).%s\n", INFO_COLOR, END_COLOR);
+    {
+        printf("%s\nINFO - Filled histograms ", INFO_COLOR);
+        (!CS) ? printf("(no CS). %s\n", END_COLOR) : printf("(with CS). %s\n", END_COLOR);
+    }
 }
 
 /**

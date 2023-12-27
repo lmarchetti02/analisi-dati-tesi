@@ -6,6 +6,7 @@
 #include "TFile.h"
 
 #include "data.hh"
+#include "constants.hh"
 
 namespace merge_pixel
 {
@@ -37,10 +38,11 @@ namespace merge_pixel
      * @param[in] entry The entry from the TTree "Event".
      * @param[in] n_pixel The number of pixel per side.
      * @param[in] n_subpixel The number of subpixels per side.
+     * @param[in] verbose Turn verbosity on/off.
      *
      * @return The entry from the TTree "Event" with the merged data.
      */
-    data::Entry merge(data::Entry entry, int n_pixel, int n_subpixel)
+    data::Entry merge(data::Entry entry, int n_pixel, int n_subpixel, bool verbose)
     {
         std::vector<Int_t> m_id_pixel{};
         std::vector<Double_t> m_pixel_energy{};
@@ -55,11 +57,15 @@ namespace merge_pixel
         // no charge sharing
         for (int i = 0; i < entry.id_pixel.size(); i++)
         {
-            int id_y = entry.id_pixel[i] / n_subpixel;
-            int id_x = entry.id_pixel[i] - id_y * n_subpixel;
+            int id = entry.id_pixel[i];
+            int id_y = id / n_subpixel;
+            int id_x = id - id_y * n_subpixel;
             id_x /= ratio;
             id_y /= ratio;
             int id_new = id_y * n_pixel + id_x;
+
+            if (verbose)
+                printf("%sDEBUG -- ID = %i; ID_new = %i \n%s", DEBUG_COLOR, id, id_new, END_COLOR);
 
             if (no_cs.find(id_new) == no_cs.end())
                 no_cs.insert(std::make_pair(id_new, entry.pixel_energy[i]));
@@ -70,11 +76,15 @@ namespace merge_pixel
         // with charge sharing
         for (int i = 0; i < entry.id_pixel_cs.size(); i++)
         {
-            int id_y = entry.id_pixel_cs[i] / n_subpixel;
-            int id_x = entry.id_pixel_cs[i] - id_y * n_subpixel;
+            int id = entry.id_pixel_cs[i];
+            int id_y = id / n_subpixel;
+            int id_x = id - id_y * n_subpixel;
             id_x /= ratio;
             id_y /= ratio;
             int id_new = id_y * n_pixel + id_x;
+
+            if (verbose)
+                printf("%sDEBUG -- ID = %i; ID_new = %i \n%s", DEBUG_COLOR, id, id_new, END_COLOR);
 
             if (with_cs.find(id_new) == with_cs.end())
                 with_cs.insert(std::make_pair(id_new, entry.pixel_energy_cs[i]));

@@ -77,7 +77,7 @@ int main(int argc, char **argv)
             printf("%sINFO - %i entries processed.%s\n", INFO_COLOR, i, END_COLOR);
 
         data::Entry entry = event.get_entry();
-        entry = merge_pixel::merge(entry, info.get_n_pixel(), info.get_n_subpixel());
+        entry = merge_pixel::merge(entry, info.get_n_pixel(), info.get_n_subpixel(), verbose);
 
         if (choice != 'g')
         {
