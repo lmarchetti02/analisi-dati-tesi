@@ -37,7 +37,7 @@ namespace data
     };
 
     /**
-     * Struct containing single rows
+     * Struct containing single entries
      * of the Event TTree.
      */
     struct Entry

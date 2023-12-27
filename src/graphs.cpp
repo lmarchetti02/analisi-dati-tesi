@@ -7,6 +7,13 @@
 
 bool graphs::Histograms::verbose = false;
 
+/**
+ * The default constructor.
+ *
+ * It creates the histograms, which are data members of the class.
+ *
+ * @param[in] N The number of pixels per side of the array.
+ */
 graphs::Histograms::Histograms(int N)
 {
     hist_energy_spectrum = new TH1D("TH1D energy spectrum", "Energy spectrum (no charge sharing)", 100, 0, 0.1);
@@ -20,6 +27,11 @@ graphs::Histograms::Histograms(int N)
     printf("%sINFO - Histograms created.%s\n\n", INFO_COLOR, END_COLOR);
 }
 
+/**
+ * The destructor.
+ *
+ * Deletes all the histograms created.
+ */
 graphs::Histograms::~Histograms()
 {
     delete hist_energy_spectrum;
@@ -44,7 +56,15 @@ graphs::Histograms::~Histograms()
         printf("INFO - Histograms destroyed.\n");
 }
 
-void graphs::Histograms::fill_histograms(data::Entry entry, int N, bool CS, bool print)
+/**
+ * Function for adding entries to the histograms.
+ *
+ * @param[in] entry The entry of the TTree "Event".
+ * @param[in] n_pixel The number of pixels per side.
+ * @param[in] CS Whether to fill the charge sharing histograms or the normal ones.
+ * @param[in] print Whether to print the entry to the terminal.
+ */
+void graphs::Histograms::fill_histograms(data::Entry entry, int n_pixel, bool CS, bool print)
 {
     if (print)
         printf("Event ID = %i\n", entry.event_id);
@@ -59,8 +79,8 @@ void graphs::Histograms::fill_histograms(data::Entry entry, int N, bool CS, bool
         (!CS) ? hist_energy_spectrum->Fill(energy) : hist_energy_spectrum_cs->Fill(energy);
 
         int ID = (!CS) ? entry.id_pixel.at(i) : entry.id_pixel_cs.at(i);
-        int ID_y = ID / N;
-        int ID_x = ID - ID_y * N;
+        int ID_y = ID / n_pixel;
+        int ID_x = ID - ID_y * n_pixel;
         if (verbose)
             printf("%sDEBUG - ID_x = %i; ID_y = %i%s\n", DEBUG_COLOR, ID_x, ID_y, END_COLOR);
 
@@ -78,6 +98,9 @@ void graphs::Histograms::fill_histograms(data::Entry entry, int N, bool CS, bool
         printf("%s\nINFO - Filled histograms (no CS).%s\n", INFO_COLOR, END_COLOR);
 }
 
+/**
+ * Function for displaying the histograms at the end of the program.
+ */
 void graphs::Histograms::show_histograms()
 {
     canvas_energy_spectrum = new TCanvas("Canvas E spectrum", "Energy Spectrum", 1000, 500);
@@ -113,6 +136,6 @@ void graphs::Histograms::show_histograms()
     if (verbose)
         printf("%sINFO - Canvases created.%s\n", INFO_COLOR, END_COLOR);
 
-    TRootCanvas *rc = (TRootCanvas *)canvas_energy_spectrum->GetCanvasImp();
+    TRootCanvas *rc = static_cast<TRootCanvas *>(canvas_energy_spectrum->GetCanvasImp());
     rc->Connect("CloseWindow()", "TApplication", gApplication, "Terminate()");
 }

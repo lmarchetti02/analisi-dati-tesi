@@ -9,8 +9,12 @@
 
 namespace graphs
 {
-    using namespace std;
 
+    /**
+     * Class for storing the histograms
+     * onto which to show the data obtained
+     * from the Geant4 simulation.
+     */
     class Histograms
     {
     private:
@@ -34,6 +38,7 @@ namespace graphs
         void fill_histograms(data::Entry entry, int N, bool CS, bool print = false);
         void show_histograms();
 
+        // Set verbosity of the class.
         static void set_verbose(bool value) { verbose = value; }
     };
 } // namespace graphs

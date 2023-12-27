@@ -1,5 +1,4 @@
 #include <iostream>
-#include <vector>
 #include <string>
 #include <memory>
 
@@ -15,13 +14,13 @@
 int main(int argc, char **argv)
 {
     printf("\033c");
-    bool verbose = false;
+    bool verbose = false; // `main()` verbosity
     TApplication app("app", &argc, argv);
 
-    // get root file name and verbosity
+    // get ROOT file name and verbosity
     char file_name[100];
     strcpy(file_name, "../results/");
-    strcat(file_name, argv[1]);
+    strncat(file_name, argv[1], 30);
     const char *verbosity = (argc == 2) ? "" : argv[2];
 
     // OPEN FILE & GET TREES
@@ -75,7 +74,7 @@ int main(int argc, char **argv)
 
         event_tree->GetEntry(i);
         if (i % 10000 == 0 && i != 0)
-            printf("%sINFO - Entry number = %i%s\n", INFO_COLOR, i, END_COLOR);
+            printf("%sINFO - %i entries processed.%s\n", INFO_COLOR, i, END_COLOR);
 
         data::Entry entry = event.get_entry();
         entry = merge_pixel::merge(entry, info.get_n_pixel(), info.get_n_subpixel());

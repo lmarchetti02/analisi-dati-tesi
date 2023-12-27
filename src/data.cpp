@@ -73,7 +73,7 @@ data::Event::~Event()
 }
 
 /**
- * Function for returning a row of the TTree "Event".
+ * Function for returning an entry of the TTree "Event".
  */
 data::Entry data::Event::get_entry() const
 {
