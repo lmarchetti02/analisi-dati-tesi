@@ -92,6 +92,11 @@ namespace merge_pixel
                 with_cs[id_new] += entry.pixel_energy_cs[i];
         }
 
+        m_id_pixel.reserve(no_cs.size());
+        m_pixel_energy.reserve(no_cs.size());
+        m_id_pixel_cs.reserve(with_cs.size());
+        m_pixel_energy_cs.reserve(with_cs.size());
+
         merge_pixel::convert(no_cs, m_id_pixel, m_pixel_energy);
         merge_pixel::convert(with_cs, m_id_pixel_cs, m_pixel_energy_cs);
 
