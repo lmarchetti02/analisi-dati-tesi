@@ -59,26 +59,24 @@ graphs::Histograms::~Histograms()
 /**
  * Function for adding entries to the histograms.
  *
- * @param[in] entry The entry of the TTree "Event".
+ * @param[in] v_id The vector containing the pixel IDs.
+ * @param[in] v_energy The vector containing the pixel energies.
  * @param[in] n_pixel The number of pixels per side.
  * @param[in] CS Whether to fill the charge sharing histograms or the normal ones.
  * @param[in] print Whether to print the entry to the terminal.
  */
-void graphs::Histograms::fill_histograms(data::Entry entry, int n_pixel, bool CS, bool print)
+void graphs::Histograms::fill_histograms(std::vector<Int_t> v_id, std::vector<Double_t> v_energy, int n_pixel, bool CS, bool print)
 {
-    if (print)
-        printf("Event ID = %i\n", entry.event_id);
-
     double total_energy = 0;
-    int limit = (!CS) ? entry.pixel_energy.size() : entry.pixel_energy_cs.size();
+    int limit = v_energy.size();
     for (int i = 0; i < limit; i++)
     {
-        double energy = (!CS) ? entry.pixel_energy.at(i) : entry.pixel_energy_cs.at(i);
+        double energy = v_energy.at(i);
 
         total_energy += energy;
         (!CS) ? hist_energy_spectrum->Fill(energy) : hist_energy_spectrum_cs->Fill(energy);
 
-        int ID = (!CS) ? entry.id_pixel.at(i) : entry.id_pixel_cs.at(i);
+        int ID = v_id.at(i);
         int ID_y = ID / n_pixel;
         int ID_x = ID - ID_y * n_pixel;
         if (verbose)

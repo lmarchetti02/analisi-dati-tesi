@@ -82,15 +82,16 @@ int main(int argc, char **argv)
         if (choice != 'g')
         {
             (i != 0) ? printf("\033c") : printf("");
-            printf("Entry number = %i\n\n", i);
+            printf("Entry number = %i\n", i);
+            printf("Event ID = %i\n\n", entry.event_id);
 
             printf("%sNO CHARGE SHARING%s\n", BOLD, END_COLOR);
             printf("-----------------\n");
-            hist.fill_histograms(entry, info.get_n_pixel(), false, true);
+            hist.fill_histograms(entry.id_pixel, entry.pixel_energy, info.get_n_pixel(), false, true);
 
             printf("\n%sWITH CHARGE SHARING%s\n", BOLD, END_COLOR);
             printf("-------------------\n");
-            hist.fill_histograms(entry, info.get_n_pixel(), true, true);
+            hist.fill_histograms(entry.id_pixel_cs, entry.pixel_energy_cs, info.get_n_pixel(), true, true);
 
             // CHOICE
             printf("\nType:\n");
@@ -102,8 +103,8 @@ int main(int argc, char **argv)
                 continue;
         }
 
-        hist.fill_histograms(entry, info.get_n_pixel(), false);
-        hist.fill_histograms(entry, info.get_n_pixel(), true);
+        hist.fill_histograms(entry.id_pixel, entry.pixel_energy, info.get_n_pixel(), false);
+        hist.fill_histograms(entry.id_pixel_cs, entry.pixel_energy_cs, info.get_n_pixel(), true);
 
         event.clearEntry(entry);
     }

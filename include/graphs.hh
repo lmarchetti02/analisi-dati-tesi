@@ -35,7 +35,7 @@ namespace graphs
         Histograms(int N);
         ~Histograms();
 
-        void fill_histograms(data::Entry entry, int N, bool CS, bool print = false);
+        void fill_histograms(std::vector<Int_t> v_id, std::vector<Double_t> v_energy, int N, bool CS, bool print = false);
         void show_histograms();
 
         // Set verbosity of the class.
