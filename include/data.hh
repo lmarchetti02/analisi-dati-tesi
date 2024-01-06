@@ -47,6 +47,9 @@ namespace data
         std::vector<Double_t> pixel_energy;
         std::vector<Int_t> id_pixel_cs;
         std::vector<Double_t> pixel_energy_cs;
+        std::vector<Int_t> id_pixel_merge;
+        std::vector<Double_t> pixel_energy_merge;
+        std::vector<Double_t> energy_escape;
     };
 
     /**
@@ -63,6 +66,9 @@ namespace data
         std::vector<Double_t> *pixel_energy = nullptr;
         std::vector<Int_t> *id_pixel_cs = nullptr;
         std::vector<Double_t> *pixel_energy_cs = nullptr;
+        std::vector<Int_t> *id_pixel_merge = nullptr;
+        std::vector<Double_t> *pixel_energy_merge = nullptr;
+        std::vector<Double_t> *energy_escape = nullptr;
 
     public:
         Event(TTree *hits_tree);
