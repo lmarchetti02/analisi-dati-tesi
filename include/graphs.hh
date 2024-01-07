@@ -23,6 +23,7 @@ namespace graphs
         TH1D *hist_total_energy;
         TH1D *hist_total_energy_cs;
         TH1D *hist_total_energy_merge;
+        TH1D *hist_total_energy_escape;
         TH2D *hist_energy_pixels;
         TH2D *hist_energy_pixels_cs;
         TH2D *hist_energy_pixels_merge;
@@ -39,6 +40,7 @@ namespace graphs
 
         void fill_histograms(std::vector<Int_t> v_id, std::vector<Double_t> v_energy, int n_subpixel, bool CS, bool print = false);
         void fill_histograms_merged(std::vector<Int_t> v_id, std::vector<Double_t> v_energy, int n_pixel, bool print = false);
+        void fill_histogram_escape(std::vector<Double_t> v_energy, bool print = false);
         void show_histograms();
 
         // Set verbosity of the class.

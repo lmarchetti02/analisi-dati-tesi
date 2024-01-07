@@ -95,6 +95,10 @@ int main(int argc, char **argv)
             printf("----------------------------\n");
             hist.fill_histograms_merged(entry.id_pixel_merge, entry.pixel_energy_merge, info.get_n_pixel(), true);
 
+            printf("\n%sESCAPED ENERGY%s\n", BOLD, END_COLOR);
+            printf("--------------\n");
+            hist.fill_histogram_escape(entry.energy_escape, true);
+
             // CHOICE
             printf("\nType:\n");
             printf("- 's' to stop\n");

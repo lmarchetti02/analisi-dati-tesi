@@ -23,6 +23,7 @@ graphs::Histograms::Histograms(int n_pixel, int n_subpixel)
     hist_total_energy = new TH1D("TH1D total energy", "Total energy (no charge sharing)", 100, 0, 0.1);
     hist_total_energy_cs = new TH1D("TH1D total energy CS", "Total energy (with charge sharing)", 100, 0, 0.1);
     hist_total_energy_merge = new TH1D("TH1D total energy CS (merged)", "Total energy (merged)", 100, 0, 0.1);
+    hist_total_energy_escape = new TH1D("TH1D total energy escape", "Total energy (escape)", 100, 0, 0.1);
 
     hist_energy_pixels = new TH2D("TH2D pixel energy", "Energy per pixel (no charge sharing)", n_subpixel, -0.5, n_subpixel - 0.5, n_subpixel, -0.5, n_subpixel - 0.5);
     hist_energy_pixels_cs = new TH2D("TH2D pixel energy CS", "Energy per pixel (with charge sharing)", n_subpixel, -0.5, n_subpixel - 0.5, n_subpixel, -0.5, n_subpixel - 0.5);
@@ -152,6 +153,26 @@ void graphs::Histograms::fill_histograms_merged(std::vector<Int_t> v_id, std::ve
 }
 
 /**
+ * Function for adding entries to the histogram showing the energy
+ * that escapes the detector.
+ *
+ * @param[in] v_energy The vector containing energy.
+ * @param[in] print Whether to print the entry to the terminal.
+ */
+void graphs::Histograms::fill_histogram_escape(std::vector<Double_t> v_energy, bool print)
+{
+    Double_t total_energy = 0;
+    for (Double_t energy : v_energy)
+    {
+        total_energy += energy;
+    }
+    hist_total_energy_escape->Fill(total_energy);
+
+    if (print)
+        printf("Total energy = %f GeV\n", total_energy);
+}
+
+/**
  * Function for displaying the histograms at the end of the program.
  */
 void graphs::Histograms::show_histograms()
@@ -169,8 +190,8 @@ void graphs::Histograms::show_histograms()
     hist_energy_spectrum_merge->SetDirectory(nullptr);
     canvas_energy_spectrum->Update();
 
-    canvas_total_energy = new TCanvas("Canvas total E", "Total Energy", 1400, 500);
-    canvas_total_energy->Divide(3, 1);
+    canvas_total_energy = new TCanvas("Canvas total E", "Total Energy", 900, 900);
+    canvas_total_energy->Divide(2, 2);
     canvas_total_energy->cd(1);
     hist_total_energy->Draw();
     hist_total_energy->SetDirectory(nullptr);
@@ -180,6 +201,9 @@ void graphs::Histograms::show_histograms()
     canvas_total_energy->cd(3);
     hist_total_energy_merge->Draw();
     hist_total_energy_merge->SetDirectory(nullptr);
+    canvas_total_energy->cd(4);
+    hist_total_energy_escape->Draw();
+    hist_total_energy_escape->SetDirectory(nullptr);
     canvas_total_energy->Update();
 
     canvas_energy_pixel = new TCanvas("Canvas pixel E", "Energy per pixel", 1400, 500);
