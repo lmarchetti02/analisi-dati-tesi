@@ -14,12 +14,12 @@ namespace data
     class Info
     {
     private:
-        Int_t n_pixel;
-        Double_t pixel_dimensions[2];
-        Int_t n_subpixel;
-        Double_t subpixel_dimensions[2];
-        Int_t n_events;
-        Int_t beam_width;
+        Int_t n_pixel{};
+        Double_t pixel_dimensions[2]{};
+        Int_t n_subpixel{};
+        Double_t subpixel_dimensions[2]{};
+        Int_t n_events{};
+        Int_t beam_width{};
 
         static bool verbose;
 

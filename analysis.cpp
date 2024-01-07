@@ -51,7 +51,7 @@ int main(int argc, char **argv)
     // -------------------------------------------------------------------
     data::Info info(info_tree);
     data::Event event(event_tree);
-    graphs::Histograms hist(info.get_n_pixel());
+    graphs::Histograms hist(info.get_n_pixel(), info.get_n_subpixel());
 
     // set verbosity
     if (!strncmp(verbosity, "-v", 2))
@@ -85,11 +85,15 @@ int main(int argc, char **argv)
 
             printf("%sNO CHARGE SHARING%s\n", BOLD, END_COLOR);
             printf("-----------------\n");
-            hist.fill_histograms(entry.id_pixel, entry.pixel_energy, info.get_n_pixel(), false, true);
+            hist.fill_histograms(entry.id_pixel, entry.pixel_energy, info.get_n_subpixel(), false, true);
 
             printf("\n%sWITH CHARGE SHARING%s\n", BOLD, END_COLOR);
             printf("-------------------\n");
-            hist.fill_histograms(entry.id_pixel_cs, entry.pixel_energy_cs, info.get_n_pixel(), true, true);
+            hist.fill_histograms(entry.id_pixel_cs, entry.pixel_energy_cs, info.get_n_subpixel(), true, true);
+
+            printf("\n%sWITH CHARGE SHARING (MERGED)%s\n", BOLD, END_COLOR);
+            printf("----------------------------\n");
+            hist.fill_histograms_merged(entry.id_pixel_merge, entry.pixel_energy_merge, info.get_n_pixel(), true);
 
             // CHOICE
             printf("\nType:\n");
@@ -101,8 +105,9 @@ int main(int argc, char **argv)
                 continue;
         }
 
-        hist.fill_histograms(entry.id_pixel, entry.pixel_energy, info.get_n_pixel(), false);
-        hist.fill_histograms(entry.id_pixel_cs, entry.pixel_energy_cs, info.get_n_pixel(), true);
+        hist.fill_histograms(entry.id_pixel, entry.pixel_energy, info.get_n_subpixel(), false);
+        hist.fill_histograms(entry.id_pixel_cs, entry.pixel_energy_cs, info.get_n_subpixel(), true);
+        hist.fill_histograms_merged(entry.id_pixel_cs, entry.pixel_energy_cs, info.get_n_pixel());
 
         event.clearEntry(entry);
     }

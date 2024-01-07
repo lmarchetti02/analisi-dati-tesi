@@ -16,7 +16,7 @@ bool data::Event::verbose = false;
 data::Info::Info(TTree *info_tree)
 {
     // load info
-    info_tree->SetBranchAddress("Pixel N", &n_pixel);
+    info_tree->SetBranchAddress("Pixel_N", &n_pixel);
     info_tree->SetBranchAddress("Pixels_xy_dim", &pixel_dimensions[0]);
     info_tree->SetBranchAddress("Pixels_z_dim", &pixel_dimensions[1]);
     info_tree->SetBranchAddress("Subpixel_N", &n_subpixel);
