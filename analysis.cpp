@@ -9,12 +9,51 @@
 #include "data.hh"
 #include "graphs.hh"
 #include "constants.hh"
+#include "options.hh"
 
 int main(int argc, char **argv)
 {
-    printf("\033c");
+    clear_screen();
     bool verbose = false; // `main()` verbosity
     TApplication app("app", &argc, argv);
+
+    {
+        options::Options opt{};
+
+        std::string choice;
+        while (true)
+        {
+            printf("\nType:\n");
+            printf("- 's' to start the analysis\n");
+            printf("- 'c' to see the current options\n");
+            printf("- 'm' to modify the options\n");
+            printf("- 'e' to exit\n");
+            std::getline(std::cin, choice);
+
+            if (choice.length() == 0 || choice.length() > 1)
+            {
+                printf("cao\n");
+                continue;
+            }
+
+            if (choice == "e")
+                std::exit(0);
+
+            if (choice == "s")
+                break;
+            else if (choice == "c")
+            {
+                clear_screen();
+                opt.print_options();
+            }
+            else if (choice == "m")
+            {
+                clear_screen();
+                opt.change_options();
+            }
+        }
+    }
+    clear_screen();
 
     // get ROOT file name and verbosity
     char file_name[100];

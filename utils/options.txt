@@ -1,4 +1,5 @@
-ROOT_FILE   
-N_THR       
-MIN_THR     
-MAX_THR
+ ROOT_FILE        output0.root
+     N_THR                   0
+   MIN_THR                   0
+   MAX_THR                  80
+ VERBOSITY                   0
