@@ -13,17 +13,30 @@ namespace options
         double max_threshold;
         bool verbosity;
 
-        static bool verbose;
+        bool opt_verbose;
 
-    public:
         Options();
-        ~Options();
 
         void set_default();
+        void save_to_file() const;
+
+    public:
+        static Options &get_instance();
+
+        Options(const Options &) = delete;
+        Options(const Options &&) = delete;
+        Options &operator=(const Options &) = delete;
+        Options &operator=(const Options &&) = delete;
+
         void print_options() const;
         void change_options();
 
+        std::string get_filename() const { return filename; }
+        int get_n_thresholds() const { return n_thresholds; }
+        std::array<double, 2> get_thresholds_extremes() const { return {min_threshold, max_threshold}; }
+        bool get_verbosity() const { return verbosity; }
+
         // Set verbosity of the class.
-        static void set_verbose(bool value) { verbose = value; }
+        void set_verbose(bool value) { opt_verbose = value; }
     };
 } // namespace options

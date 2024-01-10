@@ -17,40 +17,36 @@ int main(int argc, char **argv)
     bool verbose = false; // `main()` verbosity
     TApplication app("app", &argc, argv);
 
+    // set options
+    options::Options &opt = options::Options::get_instance();
+
+    std::string opt_choice;
+    while (true)
     {
-        options::Options opt{};
+        printf("\nType:\n");
+        printf("- 's' to start the analysis\n");
+        printf("- 'c' to see the current options\n");
+        printf("- 'm' to modify the options\n");
+        printf("- 'e' to exit\n");
+        std::getline(std::cin, opt_choice);
 
-        std::string choice;
-        while (true)
+        if (opt_choice.length() == 0 || opt_choice.length() > 1)
+            continue;
+
+        if (opt_choice == "e")
+            std::exit(0);
+
+        if (opt_choice == "s")
+            break;
+        else if (opt_choice == "c")
         {
-            printf("\nType:\n");
-            printf("- 's' to start the analysis\n");
-            printf("- 'c' to see the current options\n");
-            printf("- 'm' to modify the options\n");
-            printf("- 'e' to exit\n");
-            std::getline(std::cin, choice);
-
-            if (choice.length() == 0 || choice.length() > 1)
-            {
-                printf("cao\n");
-                continue;
-            }
-
-            if (choice == "e")
-                std::exit(0);
-
-            if (choice == "s")
-                break;
-            else if (choice == "c")
-            {
-                clear_screen();
-                opt.print_options();
-            }
-            else if (choice == "m")
-            {
-                clear_screen();
-                opt.change_options();
-            }
+            clear_screen();
+            opt.print_options();
+        }
+        else if (opt_choice == "m")
+        {
+            clear_screen();
+            opt.change_options();
         }
     }
     clear_screen();
@@ -58,8 +54,8 @@ int main(int argc, char **argv)
     // get ROOT file name and verbosity
     char file_name[100];
     strcpy(file_name, "../results/");
-    strncat(file_name, argv[1], 30);
-    const char *verbosity = (argc == 2) ? "" : argv[2];
+    strncat(file_name, opt.get_filename().c_str(), 30);
+    bool verbosity = opt.get_verbosity();
 
     // OPEN FILE & GET TREES
     // -------------------------------------------------------------------
@@ -93,7 +89,7 @@ int main(int argc, char **argv)
     graphs::Histograms hist(info.get_n_pixel(), info.get_n_subpixel());
 
     // set verbosity
-    if (!strncmp(verbosity, "-v", 2))
+    if (verbosity)
     {
         data::Info::set_verbose(true);
         data::Event::set_verbose(true);

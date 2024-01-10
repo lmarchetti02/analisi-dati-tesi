@@ -10,6 +10,22 @@
 
 const std::filesystem::path options_path{"../utils/options.txt"};
 constexpr std::array<const char *, 5> options_keys{"ROOT_FILE", "N_THR", "MIN_THR", "MAX_THR", "VERBOSITY"};
+constexpr const char FILENAME_DEF[] = "output0.root";
+constexpr int N_THRESHOLDS_DEF = 0;
+constexpr double MIN_THRESHOLD_DEF = 0.0;
+constexpr double MAX_THRESHOLD_DEF = 80.0;
+constexpr bool VERBOSITY_DEF = false;
+
+/**
+ * Static function for accessing the singleton instance.
+ *
+ * @return The singleton instance
+ */
+options::Options &options::Options::get_instance()
+{
+    static Options instance;
+    return instance;
+}
 
 /**
  * The default constructor.
@@ -17,16 +33,21 @@ constexpr std::array<const char *, 5> options_keys{"ROOT_FILE", "N_THR", "MIN_TH
  * It loads either the option specified in the options.txt file,
  * or the default ones.
  */
-options::Options::Options()
+options::Options::Options() : filename(FILENAME_DEF),
+                              n_thresholds(N_THRESHOLDS_DEF),
+                              min_threshold(MIN_THRESHOLD_DEF),
+                              max_threshold(MAX_THRESHOLD_DEF),
+                              verbosity(VERBOSITY_DEF),
+                              opt_verbose(VERBOSITY_DEF)
 {
     std::fstream options_file;
     options_file.open(options_path, std::ios::in);
 
     if (!options_file.is_open())
     {
-        printf("%sOptions::Options() ERROR: Impossible to open %s%s\n", ERROR_COLOR, options_path.c_str(), END_COLOR);
-        set_default();
-        printf("%sOptions::load_default() - INFO - Loaded default options.%s\n", ERROR_COLOR, END_COLOR);
+        printf("%sOptions::Options() - ERROR - Impossible to open %s%s\n", ERROR_COLOR, options_path.c_str(), END_COLOR);
+        if (opt_verbose)
+            printf("%sOptions::Options() - INFO - Loaded default options.%s\n", ERROR_COLOR, END_COLOR);
         return;
     }
 
@@ -35,50 +56,26 @@ options::Options::Options()
     {
         options_file >> key >> value;
 
-        if (key == options_keys[0])
+        const auto &[ROOT_FILE, N_THR, MIN_THR, MAX_THR, VERBOSITY] = options_keys;
+
+        if (key == ROOT_FILE)
             filename = value;
-        else if (key == options_keys[1])
+        else if (key == N_THR)
             n_thresholds = std::stoi(value);
-        else if (key == options_keys[2])
+        else if (key == MIN_THR)
             min_threshold = std::stod(value);
-        else if (key == options_keys[3])
+        else if (key == MAX_THR)
             max_threshold = std::stod(value);
-        else if (key == options_keys[4])
-            verbosity = static_cast<bool>(std::stoi(value));
+        else if (key == VERBOSITY)
+            verbosity = std::stoi(value) != 0;
         else
             continue;
     }
 
     options_file.close();
 
-    printf("%sOptions::Options() - INFO - Loaded info from %s.%s\n", INFO_COLOR, options_path.c_str(), END_COLOR);
-}
-
-/**
- * The destructor.
- *
- * It writes the options to the options.txt file,
- * in order to save them for the next analysis.
- */
-options::Options::~Options()
-{
-    std::fstream options_file;
-    options_file.open(options_path, std::ios::out);
-
-    if (!options_file.is_open())
-    {
-        printf("%sOptions::Options() - ERROR - Impossible to open %s.%s\n", ERROR_COLOR, options_path.c_str(), END_COLOR);
-        return;
-    }
-
-    int w = 20;
-    options_file << std::setw(w / 2) << options_keys[0] << std::setw(w) << filename << "\n";
-    options_file << std::setw(w / 2) << options_keys[1] << std::setw(w) << n_thresholds << "\n";
-    options_file << std::setw(w / 2) << options_keys[2] << std::setw(w) << min_threshold << "\n";
-    options_file << std::setw(w / 2) << options_keys[3] << std::setw(w) << max_threshold << "\n";
-    options_file << std::setw(w / 2) << options_keys[4] << std::setw(w) << verbosity << "\n";
-
-    options_file.close();
+    if (opt_verbose)
+        printf("%sOptions::Options() - INFO - Loaded info from %s.%s\n", INFO_COLOR, options_path.c_str(), END_COLOR);
 }
 
 /**
@@ -91,6 +88,41 @@ void options::Options::set_default()
     min_threshold = MIN_THRESHOLD_DEF;
     max_threshold = MAX_THRESHOLD_DEF;
     verbosity = VERBOSITY_DEF;
+
+    if (opt_verbose)
+        printf("%sOptions::set_default() - INFO - Set default options.%s\n", INFO_COLOR, END_COLOR);
+}
+
+/**
+ * Function for saving options.
+ *
+ * It writes the options to the options.txt file,
+ * in order to save them for the next analysis.
+ */
+void options::Options::save_to_file() const
+{
+    std::fstream options_file;
+    options_file.open(options_path, std::ios::out);
+
+    if (!options_file.is_open())
+    {
+        printf("%sOptions::Options() - ERROR - Impossible to open %s.%s\n", ERROR_COLOR, options_path.c_str(), END_COLOR);
+        return;
+    }
+
+    int w = 20;
+    const auto &[ROOT_FILE, N_THR, MIN_THR, MAX_THR, VERBOSITY] = options_keys;
+
+    options_file << std::setw(w / 2) << ROOT_FILE << std::setw(w) << filename << "\n";
+    options_file << std::setw(w / 2) << N_THR << std::setw(w) << n_thresholds << "\n";
+    options_file << std::setw(w / 2) << MIN_THR << std::setw(w) << min_threshold << "\n";
+    options_file << std::setw(w / 2) << MAX_THR << std::setw(w) << max_threshold << "\n";
+    options_file << std::setw(w / 2) << VERBOSITY << std::setw(w) << verbosity << "\n";
+
+    options_file.close();
+
+    if (opt_verbose)
+        printf("%sOptions::save_to_file() - INFO - Saved options to file.%s\n", INFO_COLOR, END_COLOR);
 }
 
 /**
@@ -98,12 +130,16 @@ void options::Options::set_default()
  */
 void options::Options::print_options() const
 {
+    const auto &[ROOT_FILE, N_THR, MIN_THR, MAX_THR, VERBOSITY] = options_keys;
+
+    printf("%i\n", opt_verbose);
+
     printf("\n");
-    printf("1) %s = %s\n", options_keys[0], filename.c_str());
-    printf("2) %s = %i\n", options_keys[1], n_thresholds);
-    printf("3) %s = %.2f\n", options_keys[2], min_threshold);
-    printf("4) %s = %.2f\n", options_keys[3], max_threshold);
-    printf("5) %s = %i\n", options_keys[4], verbosity);
+    printf("1) %s = %s\n", ROOT_FILE, filename.c_str());
+    printf("2) %s = %i\n", N_THR, n_thresholds);
+    printf("3) %s = %.2f\n", MIN_THR, min_threshold);
+    printf("4) %s = %.2f\n", MAX_THR, max_threshold);
+    printf("5) %s = %i\n", VERBOSITY, verbosity);
 }
 
 /**
@@ -163,4 +199,6 @@ void options::Options::change_options()
             break;
         }
     } while (!done);
+
+    save_to_file();
 }

@@ -2,4 +2,4 @@
      N_THR                   0
    MIN_THR                   0
    MAX_THR                  80
- VERBOSITY                   0
+ VERBOSITY                   1
