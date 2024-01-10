@@ -35,8 +35,5 @@ namespace options
         int get_n_thresholds() const { return n_thresholds; }
         std::array<double, 2> get_thresholds_extremes() const { return {min_threshold, max_threshold}; }
         bool get_verbosity() const { return verbosity; }
-
-        // Set verbosity of the class.
-        void set_verbose(bool value) { opt_verbose = value; }
     };
 } // namespace options

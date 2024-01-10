@@ -45,9 +45,8 @@ options::Options::Options() : filename(FILENAME_DEF),
 
     if (!options_file.is_open())
     {
-        printf("%sOptions::Options() - ERROR - Impossible to open %s%s\n", ERROR_COLOR, options_path.c_str(), END_COLOR);
-        if (opt_verbose)
-            printf("%sOptions::Options() - INFO - Loaded default options.%s\n", ERROR_COLOR, END_COLOR);
+        printf("%sOptions::Options() - WARING - Impossible to open %s%s\n", WARNING_COLOR, options_path.c_str(), END_COLOR);
+        printf("%sOptions::Options() - INFO - Loaded default options.%s\n", ERROR_COLOR, END_COLOR);
         return;
     }
 
@@ -72,6 +71,8 @@ options::Options::Options() : filename(FILENAME_DEF),
             continue;
     }
 
+    opt_verbose = verbosity;
+
     options_file.close();
 
     if (opt_verbose)
@@ -83,14 +84,19 @@ options::Options::Options() : filename(FILENAME_DEF),
  */
 void options::Options::set_default()
 {
+    bool previous_verbose = opt_verbose;
+
     filename = FILENAME_DEF;
     n_thresholds = N_THRESHOLDS_DEF;
     min_threshold = MIN_THRESHOLD_DEF;
     max_threshold = MAX_THRESHOLD_DEF;
     verbosity = VERBOSITY_DEF;
+    opt_verbose = verbosity;
 
-    if (opt_verbose)
-        printf("%sOptions::set_default() - INFO - Set default options.%s\n", INFO_COLOR, END_COLOR);
+    if (previous_verbose)
+        printf("\n%sOptions::set_default() - INFO - Set default options.%s\n", INFO_COLOR, END_COLOR);
+
+    save_to_file();
 }
 
 /**
@@ -131,8 +137,6 @@ void options::Options::save_to_file() const
 void options::Options::print_options() const
 {
     const auto &[ROOT_FILE, N_THR, MIN_THR, MAX_THR, VERBOSITY] = options_keys;
-
-    printf("%i\n", opt_verbose);
 
     printf("\n");
     printf("1) %s = %s\n", ROOT_FILE, filename.c_str());
@@ -188,6 +192,7 @@ void options::Options::change_options()
         case '5':
             std::getline(std::cin, input);
             verbosity = static_cast<bool>(std::stoi(input));
+            opt_verbose = verbosity;
             break;
         case 'd':
             set_default();
@@ -199,6 +204,9 @@ void options::Options::change_options()
             break;
         }
     } while (!done);
+
+    if (opt_verbose)
+        printf("\n%sOptions::change_options() - INFO - Options changed.%s\n", INFO_COLOR, END_COLOR);
 
     save_to_file();
 }

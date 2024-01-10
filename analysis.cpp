@@ -62,7 +62,7 @@ int main(int argc, char **argv)
     std::unique_ptr<TFile> results_file = std::make_unique<TFile>(file_name, "READ");
     if (!results_file->IsOpen())
     {
-        printf("%sError opening file %s%s\n", ERROR_COLOR, file_name, END_COLOR);
+        printf("%smain - ERROR - Impossible to open %s%s\n", ERROR_COLOR, file_name, END_COLOR);
         return 1;
     }
 
@@ -70,14 +70,14 @@ int main(int argc, char **argv)
     info_tree = static_cast<TTree *>(results_file->Get("Info"));
     if (!info_tree)
     {
-        printf("%sError loading TTree Info%s\n", ERROR_COLOR, END_COLOR);
+        printf("%smain - ERROR - Impossible to load TTree Info%s\n", ERROR_COLOR, END_COLOR);
         return 1;
     }
 
     event_tree = static_cast<TTree *>(results_file->Get("Event"));
     if (!event_tree)
     {
-        printf("%sError loading TTree Event%s\n", ERROR_COLOR, END_COLOR);
+        printf("%smain - ERROR - Impossible to load TTree Event%s\n", ERROR_COLOR, END_COLOR);
         return 1;
     }
     // -------------------------------------------------------------------
