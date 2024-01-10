@@ -4,6 +4,7 @@
 #include "TApplication.h"
 
 #include "constants.hh"
+#include "options.hh"
 
 bool graphs::Histograms::verbose = false;
 
@@ -16,6 +17,8 @@ bool graphs::Histograms::verbose = false;
  */
 graphs::Histograms::Histograms(int n_pixel, int n_subpixel)
 {
+    using namespace options;
+
     hist_energy_spectrum = new TH1D("TH1D energy spectrum", "Energy spectrum (no charge sharing)", 100, 0, 0.1);
     hist_energy_spectrum_cs = new TH1D("TH1D energy spectrum CS", "Energy spectrum (with charge sharing)", 100, 0, 0.1);
     hist_energy_spectrum_merge = new TH1D("TH1D energy spectrum CS (merged)", "Energy spectrum (merged)", 100, 0, 0.1);
@@ -28,6 +31,10 @@ graphs::Histograms::Histograms(int n_pixel, int n_subpixel)
     hist_energy_pixels = new TH2D("TH2D pixel energy", "Energy per pixel (no charge sharing)", n_subpixel, -0.5, n_subpixel - 0.5, n_subpixel, -0.5, n_subpixel - 0.5);
     hist_energy_pixels_cs = new TH2D("TH2D pixel energy CS", "Energy per pixel (with charge sharing)", n_subpixel, -0.5, n_subpixel - 0.5, n_subpixel, -0.5, n_subpixel - 0.5);
     hist_energy_pixels_merge = new TH2D("TH2D pixel energy CS (merged)", "Energy per pixel (merged)", n_pixel, -0.5, n_pixel - 0.5, n_pixel, -0.5, n_pixel - 0.5);
+
+    hist_energy_central = new TH1D("TH1D central pixel energy", "Energy in the central pixel", 100, 0, Options::get_instance().get_max_threshold());
+    hist_energy_t = new TH1D("TH1D T pixels energy", "Energy in the T pixels", 100, 0, Options::get_instance().get_max_threshold());
+    hist_energy_tr = new TH1D("TH1D TR pixels energy", "Energy in the TR pixels", 100, 0, Options::get_instance().get_max_threshold());
 
     printf("%sINFO - Histograms created.%s\n\n", INFO_COLOR, END_COLOR);
 }
@@ -218,6 +225,19 @@ void graphs::Histograms::show_histograms()
     hist_energy_pixels_merge->Draw();
     hist_energy_pixels_merge->SetDirectory(nullptr);
     canvas_energy_pixel->Update();
+
+    canvas_cross_talk = new TCanvas("Canvas cross-talk", "Study of cross-talk", 1400, 500);
+    canvas_cross_talk->Divide(3, 1);
+    canvas_cross_talk->cd(1);
+    hist_energy_central->Draw();
+    hist_energy_central->SetDirectory(nullptr);
+    canvas_cross_talk->cd(2);
+    hist_energy_t->Draw();
+    hist_energy_t->SetDirectory(nullptr);
+    canvas_cross_talk->cd(3);
+    hist_energy_tr->Draw();
+    hist_energy_tr->SetDirectory(nullptr);
+    canvas_cross_talk->Update();
 
     if (verbose)
         printf("%sINFO - Canvases created.%s\n", INFO_COLOR, END_COLOR);

@@ -20,17 +20,24 @@ namespace graphs
         TH1D *hist_energy_spectrum;
         TH1D *hist_energy_spectrum_cs;
         TH1D *hist_energy_spectrum_merge;
+
         TH1D *hist_total_energy;
         TH1D *hist_total_energy_cs;
         TH1D *hist_total_energy_merge;
         TH1D *hist_total_energy_escape;
+
         TH2D *hist_energy_pixels;
         TH2D *hist_energy_pixels_cs;
         TH2D *hist_energy_pixels_merge;
 
+        TH1D *hist_energy_central;
+        TH1D *hist_energy_t;
+        TH1D *hist_energy_tr;
+
         TCanvas *canvas_energy_spectrum;
         TCanvas *canvas_total_energy;
         TCanvas *canvas_energy_pixel;
+        TCanvas *canvas_cross_talk;
 
         static bool verbose;
 
