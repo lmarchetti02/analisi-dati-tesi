@@ -11,6 +11,7 @@ namespace options
         int n_thresholds;
         double min_threshold;
         double max_threshold;
+        double threshold_step;
         bool verbosity;
 
         bool opt_verbose;
@@ -35,6 +36,7 @@ namespace options
         int get_n_thresholds() const { return n_thresholds; }
         double get_min_threshold() const { return min_threshold; }
         double get_max_threshold() const { return max_threshold; }
+        double get_threshold_step() const { return threshold_step; }
         bool get_verbosity() const { return verbosity; }
     };
 } // namespace options

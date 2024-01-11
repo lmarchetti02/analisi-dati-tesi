@@ -37,6 +37,7 @@ options::Options::Options() : filename(FILENAME_DEF),
                               n_thresholds(N_THRESHOLDS_DEF),
                               min_threshold(MIN_THRESHOLD_DEF),
                               max_threshold(MAX_THRESHOLD_DEF),
+                              threshold_step(0),
                               verbosity(VERBOSITY_DEF),
                               opt_verbose(VERBOSITY_DEF)
 {
@@ -71,6 +72,7 @@ options::Options::Options() : filename(FILENAME_DEF),
             continue;
     }
 
+    threshold_step = (n_thresholds) ? (max_threshold - min_threshold) / n_thresholds : 0;
     opt_verbose = verbosity;
 
     options_file.close();
@@ -90,6 +92,7 @@ void options::Options::set_default()
     n_thresholds = N_THRESHOLDS_DEF;
     min_threshold = MIN_THRESHOLD_DEF;
     max_threshold = MAX_THRESHOLD_DEF;
+    threshold_step = 0;
     verbosity = VERBOSITY_DEF;
     opt_verbose = verbosity;
 
@@ -195,7 +198,9 @@ void options::Options::change_options()
             opt_verbose = verbosity;
             break;
         case 'd':
+            done = true;
             set_default();
+            break;
         case 'x':
             done = true;
             clear_screen();
@@ -203,6 +208,8 @@ void options::Options::change_options()
         default:
             break;
         }
+        if (num != '1' && num != '5')
+            threshold_step = (n_thresholds) ? (max_threshold - min_threshold) / n_thresholds : 0;
     } while (!done);
 
     if (opt_verbose)
