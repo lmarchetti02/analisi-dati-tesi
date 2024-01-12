@@ -146,7 +146,7 @@ int main(int argc, char **argv)
 
         hist.fill_histograms(entry.id_pixel, entry.pixel_energy, info.get_n_subpixel(), false);
         hist.fill_histograms(entry.id_pixel_cs, entry.pixel_energy_cs, info.get_n_subpixel(), true);
-        hist.fill_histograms_merged(entry.id_pixel_cs, entry.pixel_energy_cs, info.get_n_pixel());
+        hist.fill_histograms_merged(entry.id_pixel_merge, entry.pixel_energy_merge, info.get_n_pixel());
 
         event.clearEntry(entry);
     }
