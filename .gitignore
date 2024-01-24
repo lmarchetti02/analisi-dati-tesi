@@ -37,3 +37,5 @@
 ana_g4_3.C
 /build
 compile.sh
+/.cache
+compile_commands.json
