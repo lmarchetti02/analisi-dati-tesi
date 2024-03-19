@@ -39,3 +39,4 @@ ana_g4_3.C
 compile.sh
 /.cache
 compile_commands.json
+.DS_Store

@@ -19,6 +19,7 @@ namespace data
         Double_t subpixel_dimensions[2]{};
         Int_t n_events{};
         Int_t beam_width{};
+        Int_t beam_type{};
 
         static bool verbose;
 
@@ -42,13 +43,11 @@ namespace data
     struct Entry
     {
         Int_t event_id;
+        Double_t photon_energy;
         std::vector<Int_t> id_pixel;
         std::vector<Double_t> pixel_energy;
         std::vector<Int_t> id_pixel_cs;
         std::vector<Double_t> pixel_energy_cs;
-        std::vector<Int_t> id_pixel_merge;
-        std::vector<Double_t> pixel_energy_merge;
-        std::vector<Double_t> energy_escape;
     };
 
     /**
@@ -61,13 +60,11 @@ namespace data
         static bool verbose;
 
         Int_t event_id;
+        Double_t photon_energy;
         std::vector<Int_t> *id_pixel = nullptr;
         std::vector<Double_t> *pixel_energy = nullptr;
         std::vector<Int_t> *id_pixel_cs = nullptr;
         std::vector<Double_t> *pixel_energy_cs = nullptr;
-        std::vector<Int_t> *id_pixel_merge = nullptr;
-        std::vector<Double_t> *pixel_energy_merge = nullptr;
-        std::vector<Double_t> *energy_escape = nullptr;
 
     public:
         Event(TTree *hits_tree);
