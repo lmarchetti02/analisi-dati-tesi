@@ -24,6 +24,7 @@ data::Info::Info(TTree *info_tree)
     info_tree->SetBranchAddress("Subpixels_z_dim", &subpixel_dimensions[1]);
     info_tree->SetBranchAddress("Event_N", &n_events);
     info_tree->SetBranchAddress("Beam_Width", &beam_width);
+    info_tree->SetBranchAddress("Beam_Type", &beam_type);
 
     printf("%sINFO - Loaded simulation info from tree.%s\n\n", INFO_COLOR, END_COLOR);
 
@@ -39,6 +40,7 @@ data::Info::Info(TTree *info_tree)
     printf("Subpixel z-dimension = %.2f mm\n", subpixel_dimensions[1]);
     printf("Number of events = %i\n", n_events);
     printf("Beam width = %i\n", beam_width);
+    printf("Beam type = %i\n", beam_type);
 }
 
 /**
@@ -51,13 +53,11 @@ data::Info::Info(TTree *info_tree)
 data::Event::Event(TTree *hits_tree)
 {
     hits_tree->SetBranchAddress("Event_ID", &event_id);
-    hits_tree->SetBranchAddress("ID", &id_pixel);
-    hits_tree->SetBranchAddress("Energy", &pixel_energy);
-    hits_tree->SetBranchAddress("ID_CS", &id_pixel_cs);
-    hits_tree->SetBranchAddress("Energy_CS", &pixel_energy_cs);
-    hits_tree->SetBranchAddress("ID_Merge", &id_pixel_merge);
-    hits_tree->SetBranchAddress("Energy_Merge", &pixel_energy_merge);
-    hits_tree->SetBranchAddress("Energy_Escape", &energy_escape);
+    hits_tree->SetBranchAddress("Photon_Energy", &photon_energy);
+    hits_tree->SetBranchAddress("ID_Merge_NOCS", &id_pixel);
+    hits_tree->SetBranchAddress("Energy_Merge_NOCS", &pixel_energy);
+    hits_tree->SetBranchAddress("ID_Merge", &id_pixel_cs);
+    hits_tree->SetBranchAddress("Energy_Merge", &pixel_energy_cs);
 
     printf("\n%sINFO - Loaded hits info from tree.%s\n", INFO_COLOR, END_COLOR);
 }
@@ -73,9 +73,6 @@ data::Event::~Event()
     pixel_energy->clear();
     id_pixel_cs->clear();
     pixel_energy_cs->clear();
-    id_pixel_merge->clear();
-    pixel_energy_merge->clear();
-    energy_escape->clear();
 }
 
 /**
@@ -83,7 +80,7 @@ data::Event::~Event()
  */
 data::Entry data::Event::get_entry() const
 {
-    return {event_id, *id_pixel, *pixel_energy, *id_pixel_cs, *pixel_energy_cs, *id_pixel_merge, *pixel_energy_merge, *energy_escape};
+    return {event_id, photon_energy, *id_pixel, *pixel_energy, *id_pixel_cs, *pixel_energy_cs};
 }
 
 /**
@@ -96,7 +93,4 @@ void data::Event::clearEntry(Entry &entry) const
     entry.id_pixel_cs.clear();
     entry.pixel_energy.clear();
     entry.pixel_energy_cs.clear();
-    entry.id_pixel_merge.clear();
-    entry.pixel_energy_merge.clear();
-    entry.energy_escape.clear();
 }
