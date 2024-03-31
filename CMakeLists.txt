@@ -1,5 +1,3 @@
-# SETUP
-#-----------------------------------------------------------------------
 cmake_minimum_required(VERSION 3.26 FATAL_ERROR)
 set(CMAKE_CXX_STANDARD 17)
 project(Analisi)
@@ -17,6 +15,5 @@ file(GLOB sources ${PROJECT_SOURCE_DIR}/src/*.cpp)
 file(GLOB headers ${PROJECT_SOURCE_DIR}/include/*.hh)
 
 # Create the main program using the library.
-add_executable(analisi analysis.cpp ${sources} ${headers})
+add_executable(analisi main.cpp ${sources} ${headers})
 target_link_libraries(analisi PUBLIC ROOT::Core ROOT::Graf ROOT::Hist ROOT::Tree ROOT::Gpad ROOT::RIO)
-#-----------------------------------------------------------------------
