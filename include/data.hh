@@ -29,8 +29,6 @@ namespace data
 
         // Returns the number of pixels.
         int get_n_pixel() const { return n_pixel; }
-        // Returns the number of subpixels.
-        int get_n_subpixel() const { return n_subpixel; }
 
         // Set verbosity of the class.
         static void set_verbose(bool value) { verbose = value; }
