@@ -1,5 +1,5 @@
  ROOT_FILE        output0.root
      N_THR                 100
    MIN_THR                   0
-   MAX_THR                  80
+   MAX_THR                 0.1
  VERBOSITY                   0

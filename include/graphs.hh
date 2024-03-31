@@ -35,6 +35,8 @@ namespace graphs
         TCanvas *canvas_energy_pixel;
         TCanvas *canvas_cross_talk;
 
+        int ID_central[2];
+
         static bool verbose;
 
     public:

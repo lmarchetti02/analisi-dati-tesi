@@ -32,6 +32,9 @@ graphs::Histograms::Histograms(int n_pixel)
     hist_energy_t = new TH1D("TH1D T pixels energy", "Energy in the T pixels", 100, 0, Options::get_instance().get_max_threshold());
     hist_energy_tr = new TH1D("TH1D TR pixels energy", "Energy in the TR pixels", 100, 0, Options::get_instance().get_max_threshold());
 
+    ID_central[0] = n_pixel / 2;
+    ID_central[1] = n_pixel / 2;
+
     printf("%sINFO - Histograms created.%s\n\n", INFO_COLOR, END_COLOR);
 }
 
@@ -101,11 +104,24 @@ void graphs::Histograms::fill_histograms(std::vector<Int_t> v_id, std::vector<Do
 
         (!CS) ? hist_energy_pixels->Fill(ID_x, ID_y, energy) : hist_energy_pixels_cs->Fill(ID_x, ID_y, energy);
 
+        // fill 0, T and TR histograms
+        if (CS)
+        {
+            int delta_x = ID_x - ID_central[0];
+            int delta_y = ID_y - ID_central[1];
+
+            if (delta_x == 0 && delta_y == 0)
+                hist_energy_central->Fill(energy);
+            else if ((delta_x == 0 && abs(delta_y) == 1) || (delta_y == 0 && abs(delta_x) == 1))
+                hist_energy_t->Fill(energy);
+            else if ((delta_x == 1 && abs(delta_y) == 2) || (delta_y == 1 && abs(delta_x) == 2))
+                hist_energy_tr->Fill(energy);
+        }
+
         if (print)
             printf("ID = %i; Energy = %f GeV\n", ID, energy);
     }
     (!CS) ? hist_total_energy->Fill(total_energy) : hist_total_energy_cs->Fill(total_energy);
-
     if (print)
         printf("Total energy = %f GeV\n", total_energy);
 
