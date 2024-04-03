@@ -7,6 +7,20 @@
 namespace data
 {
     /**
+     * Structure containing the info
+     * about the pixels used for reconstructing
+     * the spectrum.
+     */
+    struct PSFInfo
+    {
+        int id_pixel_0;
+        std::array<int, 4> id_pixel_t;
+        std::array<int, 4> id_pixel_tr;
+
+        void get_ids(int n_pixel);
+    };
+
+    /**
      * Class for reading and storing the
      * info about the Geant4 simulation.
      */
@@ -20,6 +34,8 @@ namespace data
         Int_t n_events{};
         Int_t beam_width{};
         Int_t beam_type{};
+
+        PSFInfo psf_info{};
 
         static bool verbose;
 

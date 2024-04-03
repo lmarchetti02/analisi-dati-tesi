@@ -6,6 +6,28 @@ bool data::Info::verbose = false;
 bool data::Event::verbose = false;
 
 /**
+ * Function for filling the IDs
+ * of the 0, T and TR pixels.
+ */
+void data::PSFInfo::get_ids(int n_pixel)
+{
+    id_pixel_0 = (n_pixel / 2) * (1 + n_pixel);
+    id_pixel_t = {id_pixel_0 - 15, id_pixel_0 - 1, id_pixel_0 + 1, id_pixel_0 + 15};
+    id_pixel_tr = {id_pixel_0 - 16, id_pixel_0 - 14, id_pixel_0 + 14, id_pixel_0 + 16};
+
+    printf("Pixel 0: %i\n", id_pixel_0);
+
+    printf("Pixel T: ");
+    for (int i : id_pixel_t)
+        printf("%i ", i);
+
+    printf("\nPixel TR: ");
+    for (int i : id_pixel_tr)
+        printf("%i ", i);
+    printf("\n");
+}
+
+/**
  * The default constructor.
  *
  * Loads the information about the simulation and stores it into
@@ -30,6 +52,8 @@ data::Info::Info(TTree *info_tree)
 
     // store info
     info_tree->GetEntry(0);
+    printf("%sINFO ABOUT THE SIMULATION\n", BOLD);
+    printf("-------------------------%s\n", END_COLOR);
     printf("Number of pixels = %i\n", n_pixel);
     printf("Pixel x-dimension = %.4f mm\n", pixel_dimensions[0]);
     printf("Pixel y-dimension = %.4f mm\n", pixel_dimensions[0]);
@@ -41,6 +65,10 @@ data::Info::Info(TTree *info_tree)
     printf("Number of events = %i\n", n_events);
     printf("Beam width = %i\n", beam_width);
     printf("Beam type = %i\n", beam_type);
+
+    printf("%s\nINFO ABOUT THE ALGORITHM\n", BOLD);
+    printf("------------------------%s\n", END_COLOR);
+    psf_info.get_ids(n_pixel);
 }
 
 /**
