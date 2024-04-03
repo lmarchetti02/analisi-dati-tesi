@@ -1,11 +1,14 @@
 #pragma once
 
+#include <memory>
+
 #include "TCanvas.h"
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TTree.h"
 
 #include "data.hh"
+#include "pixel_collection.hh"
 
 namespace graphs
 {
@@ -29,18 +32,19 @@ namespace graphs
         TH1D *hist_energy_central;
         TH1D *hist_energy_t;
         TH1D *hist_energy_tr;
+        TH1D *hist_energy_sum;
 
         TCanvas *canvas_energy_spectrum;
         TCanvas *canvas_total_energy;
         TCanvas *canvas_energy_pixel;
         TCanvas *canvas_cross_talk;
 
-        int ID_central[2];
+        std::shared_ptr<data::PSFInfo> psf_info;
 
         static bool verbose;
 
     public:
-        Histograms(int n_pixel);
+        Histograms(int n_pixel, std::shared_ptr<data::PSFInfo> psf);
         ~Histograms();
 
         void fill_histograms(std::vector<Int_t> v_id, std::vector<Double_t> v_energy, int n_pixel, bool CS, bool print = false);

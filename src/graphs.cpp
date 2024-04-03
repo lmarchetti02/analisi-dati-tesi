@@ -1,5 +1,7 @@
 #include "graphs.hh"
 
+#include <algorithm>
+
 #include "TRootCanvas.h"
 #include "TApplication.h"
 
@@ -15,7 +17,7 @@ bool graphs::Histograms::verbose = false;
  *
  * @param[in] N The number of pixels per side of the array.
  */
-graphs::Histograms::Histograms(int n_pixel)
+graphs::Histograms::Histograms(int n_pixel, std::shared_ptr<data::PSFInfo> psf) : psf_info(psf)
 {
     using namespace options;
 
@@ -31,9 +33,7 @@ graphs::Histograms::Histograms(int n_pixel)
     hist_energy_central = new TH1D("TH1D central pixel energy", "Energy in the central pixel", 100, 0, Options::get_instance().get_max_threshold());
     hist_energy_t = new TH1D("TH1D T pixels energy", "Energy in the T pixels", 100, 0, Options::get_instance().get_max_threshold());
     hist_energy_tr = new TH1D("TH1D TR pixels energy", "Energy in the TR pixels", 100, 0, Options::get_instance().get_max_threshold());
-
-    ID_central[0] = n_pixel / 2;
-    ID_central[1] = n_pixel / 2;
+    hist_energy_sum = new TH1D("TH1D 0+T+TR pixels energy", "Energy in the 9 central pixels", 100, 0, Options::get_instance().get_max_threshold());
 
     printf("%sINFO - Histograms created.%s\n\n", INFO_COLOR, END_COLOR);
 }
@@ -72,6 +72,9 @@ graphs::Histograms::~Histograms()
     delete hist_energy_tr;
     hist_energy_tr = nullptr;
 
+    delete hist_energy_sum;
+    hist_energy_sum = nullptr;
+
     if (verbose)
         printf("INFO - Histograms destroyed.\n");
 }
@@ -107,15 +110,22 @@ void graphs::Histograms::fill_histograms(std::vector<Int_t> v_id, std::vector<Do
         // fill 0, T and TR histograms
         if (CS)
         {
-            int delta_x = ID_x - ID_central[0];
-            int delta_y = ID_y - ID_central[1];
 
-            if (delta_x == 0 && delta_y == 0)
+            if (ID == psf_info->id_pixel_0)
+            {
                 hist_energy_central->Fill(energy);
-            else if ((delta_x == 0 && abs(delta_y) == 1) || (delta_y == 0 && abs(delta_x) == 1))
+                hist_energy_sum->Fill(energy);
+            }
+            else if (std::find(psf_info->id_pixel_t.begin(), psf_info->id_pixel_t.end(), ID) != psf_info->id_pixel_t.end())
+            {
                 hist_energy_t->Fill(energy);
-            else if ((delta_x == 1 && abs(delta_y) == 2) || (delta_y == 1 && abs(delta_x) == 2))
+                hist_energy_sum->Fill(energy);
+            }
+            else if (std::find(psf_info->id_pixel_tr.begin(), psf_info->id_pixel_tr.end(), ID) != psf_info->id_pixel_tr.end())
+            {
                 hist_energy_tr->Fill(energy);
+                hist_energy_sum->Fill(energy);
+            }
         }
 
         if (print)
@@ -168,7 +178,7 @@ void graphs::Histograms::show_histograms()
     canvas_energy_pixel->Update();
 
     canvas_cross_talk = new TCanvas("Canvas cross-talk", "Study of cross-talk", 1400, 700);
-    canvas_cross_talk->Divide(3, 1);
+    canvas_cross_talk->Divide(4, 1);
     canvas_cross_talk->cd(1);
     hist_energy_central->Draw();
     hist_energy_central->SetDirectory(nullptr);
@@ -178,6 +188,9 @@ void graphs::Histograms::show_histograms()
     canvas_cross_talk->cd(3);
     hist_energy_tr->Draw();
     hist_energy_tr->SetDirectory(nullptr);
+    canvas_cross_talk->cd(4);
+    hist_energy_sum->Draw();
+    hist_energy_sum->SetDirectory(nullptr);
     canvas_cross_talk->Update();
 
     if (verbose)
