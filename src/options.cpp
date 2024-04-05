@@ -11,9 +11,9 @@
 const std::filesystem::path options_path{"../utils/options.txt"};
 constexpr std::array<const char *, 5> options_keys{"ROOT_FILE", "N_THR", "MIN_THR", "MAX_THR", "VERBOSITY"};
 constexpr const char FILENAME_DEF[] = "output0.root";
-constexpr int N_THRESHOLDS_DEF = 0;
+constexpr int N_THRESHOLDS_DEF = 50;
 constexpr double MIN_THRESHOLD_DEF = 0.0;
-constexpr double MAX_THRESHOLD_DEF = 80.0;
+constexpr double MAX_THRESHOLD_DEF = 0.1;
 constexpr bool VERBOSITY_DEF = false;
 
 /**

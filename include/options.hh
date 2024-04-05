@@ -1,9 +1,11 @@
 #pragma once
 
 #include <string>
+#include <array>
 
 namespace options
 {
+
     class Options
     {
     private:
@@ -13,7 +15,6 @@ namespace options
         double max_threshold;
         double threshold_step;
         bool verbosity;
-
         bool opt_verbose;
 
         Options();

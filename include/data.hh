@@ -46,6 +46,9 @@ namespace data
         // Returns the number of pixels.
         int get_n_pixel() const { return n_pixel; }
 
+        // Returns the psf info structure.
+        std::shared_ptr<PSFInfo> get_psf_info() { return std::make_shared<PSFInfo>(psf_info); }
+
         // Set verbosity of the class.
         static void set_verbose(bool value) { verbose = value; }
     };

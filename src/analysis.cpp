@@ -8,6 +8,7 @@
 
 #include "options.hh"
 #include "constants.hh"
+#include "pixel_collection.hh"
 
 /**
  * The default constructor.
@@ -61,6 +62,19 @@ analysis::Analysis::~Analysis()
 }
 
 /**
+ * Function for showing the results of the
+ * reconstruction of the spectrum through
+ * the algorithm used.
+ */
+void analysis::Analysis::show_results()
+{
+    pixel_collection->reconstruct_spectrum();
+    pixel_collection->print_counts();
+
+    hist->show_histograms();
+}
+
+/**
  * Function for opening the results file
  * and read the TTrees stored in it.
  */
@@ -99,7 +113,8 @@ void analysis::Analysis::get_trees()
     // get data from trees
     info = std::make_unique<data::Info>(info_tree);
     event = std::make_unique<data::Event>(event_tree);
-    hist = std::make_unique<graphs::Histograms>(info->get_n_pixel());
+    hist = std::make_unique<graphs::Histograms>(info->get_n_pixel(), info->get_psf_info());
+    pixel_collection = std::make_unique<pixel::PixelCollection>(info->get_psf_info());
 
     // set verbosity
     if (verbosity)
@@ -107,6 +122,7 @@ void analysis::Analysis::get_trees()
         data::Info::set_verbose(true);
         data::Event::set_verbose(true);
         graphs::Histograms::set_verbose(true);
+        pixel::PixelCollection::set_verbose(true);
     }
 }
 
@@ -115,7 +131,6 @@ void analysis::Analysis::get_trees()
  */
 void analysis::Analysis::run()
 {
-
     std::string choice = " ";
     for (int i = 0; i < event_tree->GetEntries(); i++)
     {
@@ -142,6 +157,9 @@ void analysis::Analysis::run()
             printf("-------------------\n");
             hist->fill_histograms(entry.id_pixel_cs, entry.pixel_energy_cs, info->get_n_pixel(), true, true);
 
+            printf("\n");
+            pixel_collection->add_event(entry.id_pixel_cs, entry.pixel_energy_cs);
+
             // CHOICE
             printf("\nType:\n");
             printf("- 's' to stop\n");
@@ -152,11 +170,12 @@ void analysis::Analysis::run()
                 continue;
         }
 
+        pixel_collection->add_event(entry.id_pixel_cs, entry.pixel_energy_cs);
         hist->fill_histograms(entry.id_pixel, entry.pixel_energy, info->get_n_pixel(), false);
         hist->fill_histograms(entry.id_pixel_cs, entry.pixel_energy_cs, info->get_n_pixel(), true);
 
         event->clearEntry(entry);
     }
 
-    hist->show_histograms();
+    show_results();
 }
