@@ -20,6 +20,8 @@ namespace graphs
     class Histograms
     {
     private:
+        int n_pixel;
+
         TH1D *hist_energy_spectrum;
         TH1D *hist_energy_spectrum_cs;
 
@@ -38,16 +40,22 @@ namespace graphs
         TCanvas *canvas_total_energy;
         TCanvas *canvas_energy_pixel;
         TCanvas *canvas_cross_talk;
+        TCanvas *canvas_reconstruction;
+
+        TH1D *hist_energy_central_corrected;
 
         std::shared_ptr<data::PSFInfo> psf_info;
 
         static bool verbose;
 
+        void fill_psf_histograms(int id, double energy);
+
     public:
         Histograms(int n_pixel, std::shared_ptr<data::PSFInfo> psf);
         ~Histograms();
 
-        void fill_histograms(std::vector<Int_t> v_id, std::vector<Double_t> v_energy, int n_pixel, bool CS, bool print = false);
+        void fill_histograms(std::vector<Int_t> v_id, std::vector<Double_t> v_energy, bool CS, bool print = false);
+        void fill_results(std::vector<Int_t> v_counts);
         void show_histograms();
 
         // Set verbosity of the class.

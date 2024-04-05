@@ -71,6 +71,7 @@ void analysis::Analysis::show_results()
     pixel_collection->reconstruct_spectrum();
     pixel_collection->print_counts();
 
+    hist->fill_results(pixel_collection->get_energy_corrected());
     hist->show_histograms();
 }
 
@@ -151,11 +152,11 @@ void analysis::Analysis::run()
 
             printf("%sNO CHARGE SHARING%s\n", BOLD, END_COLOR);
             printf("-----------------\n");
-            hist->fill_histograms(entry.id_pixel, entry.pixel_energy, info->get_n_pixel(), false, true);
+            hist->fill_histograms(entry.id_pixel, entry.pixel_energy, false, true);
 
             printf("\n%sWITH CHARGE SHARING%s\n", BOLD, END_COLOR);
             printf("-------------------\n");
-            hist->fill_histograms(entry.id_pixel_cs, entry.pixel_energy_cs, info->get_n_pixel(), true, true);
+            hist->fill_histograms(entry.id_pixel_cs, entry.pixel_energy_cs, true, true);
 
             printf("\n");
             pixel_collection->add_event(entry.id_pixel_cs, entry.pixel_energy_cs);
@@ -171,8 +172,8 @@ void analysis::Analysis::run()
         }
 
         pixel_collection->add_event(entry.id_pixel_cs, entry.pixel_energy_cs);
-        hist->fill_histograms(entry.id_pixel, entry.pixel_energy, info->get_n_pixel(), false);
-        hist->fill_histograms(entry.id_pixel_cs, entry.pixel_energy_cs, info->get_n_pixel(), true);
+        hist->fill_histograms(entry.id_pixel, entry.pixel_energy, false);
+        hist->fill_histograms(entry.id_pixel_cs, entry.pixel_energy_cs, true);
 
         event->clearEntry(entry);
     }

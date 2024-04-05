@@ -50,8 +50,10 @@ namespace pixel
 
         void add_event(std::vector<int> v_id, std::vector<double> v_energy);
         void reconstruct_spectrum();
-
         void print_counts();
+
+        // Get the reconstructed spectrum
+        std::vector<int> get_energy_corrected() { return energy_corrected[0]; }
 
         // Set verbosity of the class
         static void set_verbose(bool value) { verbose = value; }

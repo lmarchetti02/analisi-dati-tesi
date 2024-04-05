@@ -35,7 +35,11 @@ graphs::Histograms::Histograms(int n_pixel, std::shared_ptr<data::PSFInfo> psf) 
     hist_energy_tr = new TH1D("TH1D TR pixels energy", "Energy in the TR pixels", 100, 0, Options::get_instance().get_max_threshold());
     hist_energy_sum = new TH1D("TH1D 0+T+TR pixels energy", "Energy in the 9 central pixels", 100, 0, Options::get_instance().get_max_threshold());
 
+    hist_energy_central_corrected = new TH1D("TH1D reconstructed central pixel energy", "Energy in the central pixel (after reconstruction)", Options::get_instance().get_n_thresholds(), 0, 0.1);
+
     printf("%sINFO - Histograms created.%s\n\n", INFO_COLOR, END_COLOR);
+
+    this->n_pixel = n_pixel;
 }
 
 /**
@@ -75,8 +79,33 @@ graphs::Histograms::~Histograms()
     delete hist_energy_sum;
     hist_energy_sum = nullptr;
 
+    delete hist_energy_central_corrected;
+    hist_energy_central_corrected = nullptr;
+
     if (verbose)
         printf("INFO - Histograms destroyed.\n");
+}
+
+/**
+ *
+ */
+void graphs::Histograms::fill_psf_histograms(int id, double energy)
+{
+    if (id == psf_info->id_pixel_0)
+    {
+        hist_energy_central->Fill(energy);
+        hist_energy_sum->Fill(energy);
+    }
+    else if (std::find(psf_info->id_pixel_t.begin(), psf_info->id_pixel_t.end(), id) != psf_info->id_pixel_t.end())
+    {
+        hist_energy_t->Fill(energy);
+        hist_energy_sum->Fill(energy);
+    }
+    else if (std::find(psf_info->id_pixel_tr.begin(), psf_info->id_pixel_tr.end(), id) != psf_info->id_pixel_tr.end())
+    {
+        hist_energy_tr->Fill(energy);
+        hist_energy_sum->Fill(energy);
+    }
 }
 
 /**
@@ -84,11 +113,10 @@ graphs::Histograms::~Histograms()
  *
  * @param[in] v_id The vector containing the pixel IDs.
  * @param[in] v_energy The vector containing the pixel energies.
- * @param[in] n_pixel The number of subpixels per side.
  * @param[in] CS Whether to fill the charge sharing histograms or the normal ones.
  * @param[in] print Whether to print the entry to the terminal.
  */
-void graphs::Histograms::fill_histograms(std::vector<Int_t> v_id, std::vector<Double_t> v_energy, int n_pixel, bool CS, bool print)
+void graphs::Histograms::fill_histograms(std::vector<Int_t> v_id, std::vector<Double_t> v_energy, bool CS, bool print)
 {
     double total_energy = 0;
     int limit = v_energy.size();
@@ -109,24 +137,7 @@ void graphs::Histograms::fill_histograms(std::vector<Int_t> v_id, std::vector<Do
 
         // fill 0, T and TR histograms
         if (CS)
-        {
-
-            if (ID == psf_info->id_pixel_0)
-            {
-                hist_energy_central->Fill(energy);
-                hist_energy_sum->Fill(energy);
-            }
-            else if (std::find(psf_info->id_pixel_t.begin(), psf_info->id_pixel_t.end(), ID) != psf_info->id_pixel_t.end())
-            {
-                hist_energy_t->Fill(energy);
-                hist_energy_sum->Fill(energy);
-            }
-            else if (std::find(psf_info->id_pixel_tr.begin(), psf_info->id_pixel_tr.end(), ID) != psf_info->id_pixel_tr.end())
-            {
-                hist_energy_tr->Fill(energy);
-                hist_energy_sum->Fill(energy);
-            }
-        }
+            fill_psf_histograms(ID, energy);
 
         if (print)
             printf("ID = %i; Energy = %f GeV\n", ID, energy);
@@ -139,6 +150,18 @@ void graphs::Histograms::fill_histograms(std::vector<Int_t> v_id, std::vector<Do
     {
         printf("%s\nINFO - Filled histograms ", INFO_COLOR);
         (!CS) ? printf("(no CS). %s\n", END_COLOR) : printf("(with CS). %s\n", END_COLOR);
+    }
+}
+
+/**
+ *
+ */
+void graphs::Histograms::fill_results(std::vector<Int_t> v_energy)
+{
+    for (int i = 0; i < v_energy.size(); i++)
+    {
+        for (int j = 0; j < v_energy[i]; j++)
+            hist_energy_central_corrected->Fill(i);
     }
 }
 
@@ -192,6 +215,16 @@ void graphs::Histograms::show_histograms()
     hist_energy_sum->Draw();
     hist_energy_sum->SetDirectory(nullptr);
     canvas_cross_talk->Update();
+
+    canvas_reconstruction = new TCanvas("Canvas reconstruction", "Spectrum Reconstruction", 1400, 700);
+    canvas_reconstruction->Divide(2, 1);
+    canvas_reconstruction->cd(1);
+    hist_energy_central->Draw();
+    hist_energy_central->SetDirectory(nullptr);
+    canvas_reconstruction->cd(2);
+    hist_energy_central_corrected->Draw();
+    hist_energy_central_corrected->SetDirectory(nullptr);
+    canvas_reconstruction->Update();
 
     if (verbose)
         printf("%sINFO - Canvases created.%s\n", INFO_COLOR, END_COLOR);
