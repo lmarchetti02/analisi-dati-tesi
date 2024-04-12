@@ -135,6 +135,9 @@ void analysis::Analysis::run()
     std::string choice = " ";
     for (int i = 0; i < event_tree->GetEntries(); i++)
     {
+        if (choice == 'e')
+            std::exit(0);
+
         if (choice == 's')
             break;
 
@@ -165,6 +168,7 @@ void analysis::Analysis::run()
             printf("\nType:\n");
             printf("- 's' to stop\n");
             printf("- 'g' to go until the end (no print)\n");
+            printf("- 'e' to exit\n");
             printf("- anything else to continue\n");
             std::getline(std::cin, choice);
             if (choice.length() == 0)
