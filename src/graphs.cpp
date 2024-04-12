@@ -1,6 +1,7 @@
 #include "graphs.hh"
 
 #include <algorithm>
+#include <array>
 
 #include "TRootCanvas.h"
 #include "TApplication.h"
@@ -35,7 +36,8 @@ graphs::Histograms::Histograms(int n_pixel, std::shared_ptr<data::PSFInfo> psf) 
     hist_energy_tr = new TH1D("TH1D TR pixels energy", "Energy in the TR pixels", 100, 0, Options::get_instance().get_max_threshold());
     hist_energy_sum = new TH1D("TH1D 0+T+TR pixels energy", "Energy in the 9 central pixels", 100, 0, Options::get_instance().get_max_threshold());
 
-    hist_energy_central_corrected = new TH1D("TH1D reconstructed central pixel energy", "Energy in the central pixel (after reconstruction)", Options::get_instance().get_n_thresholds(), 0, 0.1);
+    int N = Options::get_instance().get_n_thresholds();
+    hist_energy_central_corrected = new TH1D("TH1D reconstructed central pixel energy", "Energy in the central pixel (after reconstruction)", N, -0.5, N - 0.5);
 
     printf("%sINFO - Histograms created.%s\n\n", INFO_COLOR, END_COLOR);
 
@@ -158,11 +160,8 @@ void graphs::Histograms::fill_histograms(std::vector<Int_t> v_id, std::vector<Do
  */
 void graphs::Histograms::fill_results(std::vector<Int_t> v_energy)
 {
-    for (int i = 0; i < v_energy.size(); i++)
-    {
-        for (int j = 0; j < v_energy[i]; j++)
-            hist_energy_central_corrected->Fill(i);
-    }
+    for (int i = 0; i < options::Options::get_instance().get_n_thresholds(); i++)
+        hist_energy_central_corrected->SetBinContent(i + 1, v_energy[i]);
 }
 
 /**

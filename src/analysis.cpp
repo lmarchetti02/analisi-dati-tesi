@@ -69,7 +69,7 @@ analysis::Analysis::~Analysis()
 void analysis::Analysis::show_results()
 {
     pixel_collection->reconstruct_spectrum();
-    pixel_collection->print_counts();
+    // pixel_collection->print_counts();
 
     hist->fill_results(pixel_collection->get_energy_corrected());
     hist->show_histograms();

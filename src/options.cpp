@@ -144,8 +144,8 @@ void options::Options::print_options() const
     printf("\n");
     printf("1) %s = %s\n", ROOT_FILE, filename.c_str());
     printf("2) %s = %i\n", N_THR, n_thresholds);
-    printf("3) %s = %.2f\n", MIN_THR, min_threshold);
-    printf("4) %s = %.2f\n", MAX_THR, max_threshold);
+    printf("3) %s = %.3f GeV\n", MIN_THR, min_threshold);
+    printf("4) %s = %.3f GeV\n", MAX_THR, max_threshold);
     printf("5) %s = %i\n", VERBOSITY, verbosity);
 }
 
