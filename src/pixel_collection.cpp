@@ -145,7 +145,7 @@ void pixel::PixelCollection::reconstruct_spectrum()
             correction_1 += 4 * counts_and[0][i - j - 1][j];
 
         for (int j = i + 1; j < N; j++)
-            correction_1 += 4 * counts_and[0][i][j - i - 1];
+            correction_2 += 4 * counts_and[0][i][j - i - 1];
 
         energy_corrected[0][i] = energy_measured[0][i] + correction_1 - correction_2;
     }
