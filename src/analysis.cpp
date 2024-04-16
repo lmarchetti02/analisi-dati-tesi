@@ -66,9 +66,9 @@ analysis::Analysis::~Analysis()
  * reconstruction of the spectrum through
  * the algorithm used.
  */
-void analysis::Analysis::show_results()
+void analysis::Analysis::show_results() const
 {
-    pixel_collection->reconstruct_spectrum();
+    pixel_collection->reconstruct_spectrum(info->get_beam_width());
     // pixel_collection->print_counts();
 
     hist->fill_results(pixel_collection->get_energy_corrected());
@@ -130,7 +130,7 @@ void analysis::Analysis::get_trees()
 /**
  * Function for running the data analysis.
  */
-void analysis::Analysis::run()
+void analysis::Analysis::run() const
 {
     std::string choice = " ";
     for (int i = 0; i < event_tree->GetEntries(); i++)

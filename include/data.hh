@@ -45,7 +45,8 @@ namespace data
 
         // Returns the number of pixels.
         int get_n_pixel() const { return n_pixel; }
-
+        // Returns the type of illumination.
+        int get_beam_width() const { return beam_width; }
         // Returns the psf info structure.
         std::shared_ptr<PSFInfo> get_psf_info() { return std::make_shared<PSFInfo>(psf_info); }
 

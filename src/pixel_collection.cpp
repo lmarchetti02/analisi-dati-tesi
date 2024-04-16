@@ -53,7 +53,7 @@ void pixel::PixelCollection::fill_collection(double energy, int type)
  * Function for printing the correlations
  * matrix between the energy bins.
  */
-void pixel::PixelCollection::print_correlations()
+void pixel::PixelCollection::print_correlations() const
 {
     printf("CORRELATIONS 0-T\n");
     printf("----------------\n");
@@ -131,10 +131,13 @@ void pixel::PixelCollection::add_event(std::vector<int> v_id, std::vector<double
 /**
  * Function for reconstruction the energy spectrum
  * of the pixels (right now just 0).
+ *
+ * @param[in] beam_width The type of illumination: 0 for central pixel, 1 for the whole array.
  */
-void pixel::PixelCollection::reconstruct_spectrum()
+void pixel::PixelCollection::reconstruct_spectrum(int beam_width)
 {
     int N = options::Options::get_instance().get_n_thresholds();
+    int mult = (!beam_width) ? 4 : 2;
 
     for (int i = 0; i < N; i++)
     {
@@ -142,10 +145,10 @@ void pixel::PixelCollection::reconstruct_spectrum()
         int correction_2 = 0;
 
         for (int j = 0; j < i; j++)
-            correction_1 += 4 * counts_and[0][i - j - 1][j];
+            correction_1 += mult * counts_and[0][i - j - 1][j];
 
         for (int j = i + 1; j < N; j++)
-            correction_2 += 4 * counts_and[0][i][j - i - 1];
+            correction_2 += mult * counts_and[0][i][j - i - 1];
 
         energy_corrected[0][i] = energy_measured[0][i] + correction_1 - correction_2;
     }
@@ -155,7 +158,7 @@ void pixel::PixelCollection::reconstruct_spectrum()
  * Function for printing the results
  * of the algorithm.
  */
-void pixel::PixelCollection::print_counts()
+void pixel::PixelCollection::print_counts() const
 {
     printf("PIXEL 0\n");
     printf("-------\n");

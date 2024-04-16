@@ -39,21 +39,21 @@ namespace pixel
 
         static bool verbose;
 
-        int get_bin(double energy) { return energy / bin_size; }
+        int get_bin(double energy) const { return energy / bin_size; }
         void fill_collection(double energy, int type);
 
-        void print_correlations();
+        void print_correlations() const;
 
     public:
         PixelCollection(std::shared_ptr<data::PSFInfo> psf);
         ~PixelCollection() = default;
 
         void add_event(std::vector<int> v_id, std::vector<double> v_energy);
-        void reconstruct_spectrum();
-        void print_counts();
+        void reconstruct_spectrum(int beam_width);
+        void print_counts() const;
 
         // Get the reconstructed spectrum
-        std::vector<int> get_energy_corrected() { return energy_corrected[0]; }
+        std::vector<int> get_energy_corrected() const { return energy_corrected[0]; }
 
         // Set verbosity of the class
         static void set_verbose(bool value) { verbose = value; }

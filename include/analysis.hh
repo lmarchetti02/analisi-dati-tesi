@@ -29,13 +29,13 @@ namespace analysis
 
         std::unique_ptr<pixel::PixelCollection> pixel_collection;
 
-        void show_results();
+        void show_results() const;
 
     public:
         Analysis();
         ~Analysis();
 
         void get_trees();
-        void run();
+        void run() const;
     };
 } // namespace analysis
