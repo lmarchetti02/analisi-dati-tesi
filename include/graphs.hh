@@ -6,6 +6,7 @@
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TTree.h"
+#include "THStack.h"
 
 #include "data.hh"
 #include "pixel_collection.hh"
@@ -43,6 +44,7 @@ namespace graphs
         TCanvas *canvas_reconstruction;
 
         TH1D *hist_energy_central_corrected;
+        THStack *hist_stack_corrections;
 
         std::shared_ptr<data::PSFInfo> psf_info;
 
