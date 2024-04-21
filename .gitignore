@@ -33,6 +33,7 @@
 
 # Other files/folders
 /results
+/output
 /.vscode
 ana_g4_3.C
 /build

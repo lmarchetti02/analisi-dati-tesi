@@ -1,8 +1,15 @@
 #include "pixel_collection.hh"
 
+#include <fstream>
+#include <filesystem>
+#include <stdexcept>
+
 #include "options.hh"
 
 bool pixel::PixelCollection::verbose = false;
+
+const std::filesystem::path and_path{"../output/0T_and_matrix.csv"};
+const std::filesystem::path counts_path{"../output/pixel_0_counts.csv"};
 
 /**
  * The default constructor.
@@ -50,7 +57,7 @@ void pixel::PixelCollection::fill_collection(double energy, int type)
 }
 
 /**
- * Function for printing the correlations
+ * Function for printing the correlation
  * matrix between the energy bins.
  */
 void pixel::PixelCollection::print_correlations() const
@@ -182,4 +189,39 @@ void pixel::PixelCollection::print_counts() const
     printf("-----------------\n");
     for (int i = 0; i < energy_corrected[0].size(); i++)
         printf("Bin %i: %i counts\n", i, energy_corrected[0][i]);
+}
+
+/**
+ * Function for saving the results of the analysis
+ * to a .txt file.
+ */
+void pixel::PixelCollection::save_output()
+{
+    std::fstream and_file;
+    std::fstream counts_file;
+
+    // save counts
+    counts_file.open(counts_path, std::ios::out);
+    if (!counts_file.is_open())
+        throw std::runtime_error("");
+
+    counts_file << "Bin,Counts\n";
+    for (int i = 0; i < energy_measured[0].size(); i++)
+        counts_file << i << "," << energy_measured[0][i] << "\n";
+
+    // save and
+    and_file.open(and_path, std::ios::out);
+    if (!and_file.is_open())
+        throw std::runtime_error("");
+
+    and_file << "Bin 0, Bin T,Counts\n";
+    for (int i = 0; i < counts_and[0].size(); i++)
+    {
+        for (int j = 0; j < counts_and[0][i].size(); j++)
+            and_file << i << "," << j << "," << counts_and[0][i][j] << "\n";
+    }
+
+    // close files
+    counts_file.close();
+    and_file.close();
 }

@@ -51,6 +51,7 @@ namespace pixel
         void add_event(std::vector<int> v_id, std::vector<double> v_energy);
         void reconstruct_spectrum(int beam_width);
         void print_counts() const;
+        void save_output();
 
         // Get the reconstructed spectrum
         std::vector<int> get_energy_corrected() const { return energy_corrected[0]; }
