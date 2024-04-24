@@ -32,8 +32,6 @@
 *.app
 
 # Other files/folders
-/results
-/output
 /.vscode
 ana_g4_3.C
 /build
@@ -41,3 +39,5 @@ compile.sh
 /.cache
 compile_commands.json
 .DS_Store
+*.csv
+*.root
