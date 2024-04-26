@@ -1,4 +1,5 @@
 #include <iostream>
+#include <filesystem>
 
 #include "TApplication.h"
 
@@ -6,6 +7,10 @@
 
 int main(int argc, char **argv)
 {
+    // create necessary directories
+    std::filesystem::create_directory("../output");
+    std::filesystem::create_directory("../results");
+
     printf("\033c");
     TApplication app("app", &argc, argv);
 

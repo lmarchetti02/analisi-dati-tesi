@@ -231,8 +231,9 @@ void graphs::Histograms::show_histograms()
     canvas_reconstruction->Update();
     canvas_reconstruction->cd(3);
     hist_stack_corrections->Add(hist_energy_central);
-    hist_stack_corrections->Add(hist_energy_central_corrected);
-    hist_energy_central_corrected->SetFillColor(2);
+    TH1D *hist_energy_central_corrected_clone = static_cast<TH1D *>(hist_energy_central_corrected->Clone());
+    hist_stack_corrections->Add(hist_energy_central_corrected_clone);
+    hist_energy_central_corrected_clone->SetFillColor(2);
     hist_stack_corrections->Draw("nostack");
     canvas_reconstruction->Update();
 

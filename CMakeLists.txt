@@ -5,7 +5,7 @@ project(Analisi)
 # set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # look for GEANT4
-find_package(ROOT 6.16 CONFIG REQUIRED)
+find_package(ROOT 6.30 CONFIG REQUIRED)
 
 # include necessary files and directories
 include_directories(${PROJECT_SOURCE_DIR}/include)
