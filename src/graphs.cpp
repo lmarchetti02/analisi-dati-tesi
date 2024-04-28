@@ -17,6 +17,7 @@ bool graphs::Histograms::verbose = false;
  * It creates the histograms, which are data members of the class.
  *
  * @param[in] N The number of pixels per side of the array.
+ * @param[in] psf The pointer to the PSFInfo structure.
  */
 graphs::Histograms::Histograms(int n_pixel, std::shared_ptr<data::PSFInfo> psf) : psf_info(psf)
 {
@@ -38,6 +39,7 @@ graphs::Histograms::Histograms(int n_pixel, std::shared_ptr<data::PSFInfo> psf) 
     hist_energy_tr = new TH1D("TH1D TR pixels energy", "Energy in the TR pixels", N, 0, Options::get_instance().get_max_threshold());
     hist_energy_sum = new TH1D("TH1D 0+T+TR pixels energy", "Energy in the 9 central pixels", N, 0, Options::get_instance().get_max_threshold());
 
+    hist_photon_energy = new TH1D("TH1D photon energy", "Original spectrum of the photon", 50, 0, Options::get_instance().get_max_threshold());
     hist_energy_central_corrected = new TH1D("TH1D reconstructed central pixel energy", "Energy in the central pixel (after reconstruction)", N, 0, Options::get_instance().get_max_threshold());
     hist_stack_corrections = new THStack("THStack central pixel corrections", "Energy before and after reconstruction");
 
@@ -82,6 +84,9 @@ graphs::Histograms::~Histograms()
 
     delete hist_energy_sum;
     hist_energy_sum = nullptr;
+
+    delete hist_photon_energy;
+    hist_photon_energy = nullptr;
 
     delete hist_energy_central_corrected;
     hist_energy_central_corrected = nullptr;
@@ -220,8 +225,8 @@ void graphs::Histograms::show_histograms()
     hist_energy_sum->SetDirectory(nullptr);
     canvas_cross_talk->Update();
 
-    canvas_reconstruction = new TCanvas("Canvas reconstruction", "Spectrum Reconstruction", 1400, 700);
-    canvas_reconstruction->Divide(3, 1);
+    canvas_reconstruction = new TCanvas("Canvas reconstruction", "Spectrum Reconstruction", 1000, 1000);
+    canvas_reconstruction->Divide(2, 2);
     canvas_reconstruction->cd(1);
     hist_energy_central->Draw();
     hist_energy_central->SetDirectory(nullptr);
@@ -230,6 +235,10 @@ void graphs::Histograms::show_histograms()
     hist_energy_central_corrected->SetDirectory(nullptr);
     canvas_reconstruction->Update();
     canvas_reconstruction->cd(3);
+    hist_photon_energy->Draw();
+    hist_photon_energy->SetDirectory(nullptr);
+    canvas_reconstruction->Update();
+    canvas_reconstruction->cd(4);
     hist_stack_corrections->Add(hist_energy_central);
     TH1D *hist_energy_central_corrected_clone = static_cast<TH1D *>(hist_energy_central_corrected->Clone());
     hist_stack_corrections->Add(hist_energy_central_corrected_clone);

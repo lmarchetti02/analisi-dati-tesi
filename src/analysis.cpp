@@ -163,6 +163,7 @@ void analysis::Analysis::run() const
 
             printf("\n");
             pixel_collection->add_event(entry.id_pixel_cs, entry.pixel_energy_cs);
+            hist->fill_photon_energy(entry.photon_energy);
 
             // CHOICE
             printf("\nType:\n");
@@ -176,6 +177,7 @@ void analysis::Analysis::run() const
         }
 
         pixel_collection->add_event(entry.id_pixel_cs, entry.pixel_energy_cs);
+        hist->fill_photon_energy(entry.photon_energy);
         hist->fill_histograms(entry.id_pixel, entry.pixel_energy, false);
         hist->fill_histograms(entry.id_pixel_cs, entry.pixel_energy_cs, true);
 

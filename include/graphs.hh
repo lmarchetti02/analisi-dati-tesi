@@ -43,6 +43,7 @@ namespace graphs
         TCanvas *canvas_cross_talk;
         TCanvas *canvas_reconstruction;
 
+        TH1D *hist_photon_energy;
         TH1D *hist_energy_central_corrected;
         THStack *hist_stack_corrections;
 
@@ -58,6 +59,7 @@ namespace graphs
 
         void fill_histograms(std::vector<Int_t> v_id, std::vector<Double_t> v_energy, bool CS, bool print = false);
         void fill_results(std::vector<Int_t> v_counts);
+        void fill_photon_energy(Double_t energy) { hist_photon_energy->Fill(energy); }
         void show_histograms();
 
         // Set verbosity of the class.
