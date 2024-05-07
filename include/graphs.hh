@@ -59,6 +59,7 @@ namespace graphs
 
         void fill_histograms(std::vector<Int_t> v_id, std::vector<Double_t> v_energy, bool CS, bool print = false);
         void fill_results(std::vector<Int_t> v_counts);
+        void fill_hist_sum(std::vector<Int_t> v_id, std::vector<Double_t> v_energy);
         void fill_photon_energy(Double_t energy) { hist_photon_energy->Fill(energy); }
         void show_histograms();
 

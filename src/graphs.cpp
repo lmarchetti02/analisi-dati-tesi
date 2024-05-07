@@ -16,7 +16,7 @@ bool graphs::Histograms::verbose = false;
  *
  * It creates the histograms, which are data members of the class.
  *
- * @param[in] N The number of pixels per side of the array.
+ * @param[in] n_pixel The number of pixels per side of the array.
  * @param[in] psf The pointer to the PSFInfo structure.
  */
 graphs::Histograms::Histograms(int n_pixel, std::shared_ptr<data::PSFInfo> psf) : psf_info(psf)
@@ -99,25 +99,20 @@ graphs::Histograms::~Histograms()
 }
 
 /**
+ * Function for filling the histograms
+ * with the energy in pixel 0, T and TR.
  *
+ * @param[in] id The pixel ID.
+ * @param[in] energy The energy in the pixel.
  */
 void graphs::Histograms::fill_psf_histograms(int id, double energy)
 {
     if (id == psf_info->id_pixel_0)
-    {
         hist_energy_central->Fill(energy);
-        hist_energy_sum->Fill(energy);
-    }
     else if (std::find(psf_info->id_pixel_t.begin(), psf_info->id_pixel_t.end(), id) != psf_info->id_pixel_t.end())
-    {
         hist_energy_t->Fill(energy);
-        hist_energy_sum->Fill(energy);
-    }
     else if (std::find(psf_info->id_pixel_tr.begin(), psf_info->id_pixel_tr.end(), id) != psf_info->id_pixel_tr.end())
-    {
         hist_energy_tr->Fill(energy);
-        hist_energy_sum->Fill(energy);
-    }
 }
 
 /**
@@ -137,7 +132,8 @@ void graphs::Histograms::fill_histograms(std::vector<Int_t> v_id, std::vector<Do
         double energy = v_energy.at(i);
 
         total_energy += energy;
-        (!CS) ? hist_energy_spectrum->Fill(energy) : hist_energy_spectrum_cs->Fill(energy);
+        if (energy > 0)
+            (!CS) ? hist_energy_spectrum->Fill(energy) : hist_energy_spectrum_cs->Fill(energy);
 
         int ID = v_id.at(i);
         int ID_y = ID / n_pixel;
@@ -163,15 +159,43 @@ void graphs::Histograms::fill_histograms(std::vector<Int_t> v_id, std::vector<Do
         printf("%s\nINFO - Filled histograms ", INFO_COLOR);
         (!CS) ? printf("(no CS). %s\n", END_COLOR) : printf("(with CS). %s\n", END_COLOR);
     }
+
+    fill_hist_sum(v_id, v_energy);
 }
 
 /**
+ * Function for filling the histogram with
+ * the energy spectrum after reconstruction.
  *
+ * @param[in] v_count The vector with the counts in each of the energy bins.
  */
-void graphs::Histograms::fill_results(std::vector<Int_t> v_energy)
+void graphs::Histograms::fill_results(std::vector<Int_t> v_counts)
 {
     for (int i = 0; i < options::Options::get_instance().get_n_thresholds(); i++)
-        hist_energy_central_corrected->SetBinContent((i + 1), v_energy[i]);
+        hist_energy_central_corrected->SetBinContent((i + 1), v_counts[i]);
+}
+
+/**
+ * Function for filling the histogram with the
+ * sum of the 9 pixel considered (0 + T + TR).
+ *
+ * @param[in] v_id The vector containing the pixel IDs.
+ * @param[in] v_energy The vector containing the pixel energies.
+ */
+void graphs::Histograms::fill_hist_sum(std::vector<Int_t> v_id, std::vector<Double_t> v_energy)
+{
+    double sum = 0;
+    for (int i = 0; i < v_id.size(); i++)
+    {
+        if (v_id[i] == psf_info->id_pixel_0)
+            sum += v_energy[i];
+        else if (std::find(psf_info->id_pixel_t.begin(), psf_info->id_pixel_t.end(), v_id[i]) != psf_info->id_pixel_t.end())
+            sum += v_energy[i];
+        else if (std::find(psf_info->id_pixel_tr.begin(), psf_info->id_pixel_tr.end(), v_id[i]) != psf_info->id_pixel_tr.end())
+            sum += v_energy[i];
+    }
+
+    hist_energy_sum->Fill(sum);
 }
 
 /**

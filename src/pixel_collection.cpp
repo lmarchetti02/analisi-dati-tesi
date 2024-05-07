@@ -152,10 +152,10 @@ void pixel::PixelCollection::reconstruct_spectrum(int beam_width)
         int correction_2 = 0;
 
         for (int j = 0; j < i; j++)
-            correction_1 += mult * counts_and[0][i - j - 1][j];
+            correction_1 += mult * counts_and[0][j][i - j];
 
         for (int j = i + 1; j < N; j++)
-            correction_2 += mult * counts_and[0][i][j - i - 1];
+            correction_2 += mult * counts_and[0][i][j - i];
 
         energy_corrected[0][i] = energy_measured[0][i] + correction_1 - correction_2;
     }
