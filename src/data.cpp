@@ -81,7 +81,7 @@ data::Info::Info(TTree *info_tree)
 data::Event::Event(TTree *hits_tree)
 {
     hits_tree->SetBranchAddress("Event_ID", &event_id);
-    hits_tree->SetBranchAddress("Photon_Energy", &photon_energy);
+    hits_tree->SetBranchAddress("Photon_energy", &photon_energy);
     hits_tree->SetBranchAddress("ID_Merge_NOCS", &id_pixel);
     hits_tree->SetBranchAddress("Energy_Merge_NOCS", &pixel_energy);
     hits_tree->SetBranchAddress("ID_Merge", &id_pixel_cs);
