@@ -144,20 +144,41 @@ void pixel::PixelCollection::add_event(std::vector<int> v_id, std::vector<double
 void pixel::PixelCollection::reconstruct_spectrum(int beam_width)
 {
     int N = options::Options::get_instance().get_n_thresholds();
-    int mult = (!beam_width) ? 4 : 2;
 
-    for (int i = 0; i < N; i++)
+    if (!beam_width)
     {
-        int correction_1 = 0;
-        int correction_2 = 0;
+        for (int i = 0; i < N; i++)
+        {
+            int correction_1 = 0;
+            int correction_2 = 0;
 
-        for (int j = 0; j < i; j++)
-            correction_1 += mult * counts_and[0][j][i - j];
+            for (int j = 0; j < i; j++)
+                correction_1 += 4 * counts_and[0][j][i - j];
 
-        for (int j = i + 1; j < N; j++)
-            correction_2 += mult * counts_and[0][i][j - i];
+            for (int j = i + 1; j < N; j++)
+                correction_2 += 4 * counts_and[0][i][j - i];
 
-        energy_corrected[0][i] = energy_measured[0][i] + correction_1 - correction_2;
+            energy_corrected[0][i] = energy_measured[0][i] + correction_1 - correction_2;
+        }
+    }
+    else
+    {
+        for (int i = 0; i < N; i++)
+        {
+            int correction_1 = 0;
+            int correction_2 = 0;
+
+            if (i)
+                for (int j = 0; j < i; j++)
+                    correction_1 += 2 * counts_and[0][i - j][j];
+            else
+                correction_1 += -2 * counts_and[0][0][0];
+
+            for (int j = 1; j < N - i; j++)
+                correction_2 += 4 * counts_and[0][j][i];
+
+            energy_corrected[0][i] = energy_measured[0][i] + correction_1 - correction_2;
+        }
     }
 }
 
