@@ -35,10 +35,8 @@ namespace graphs
         TH1D *hist_energy_central;
         TH1D *hist_energy_t;
         TH1D *hist_energy_tr;
-        TH1D *hist_energy_sum;
 
-        TCanvas *canvas_energy_spectrum;
-        TCanvas *canvas_total_energy;
+        TCanvas *canvas_energy;
         TCanvas *canvas_energy_pixel;
         TCanvas *canvas_cross_talk;
         TCanvas *canvas_reconstruction;
@@ -59,7 +57,6 @@ namespace graphs
 
         void fill_histograms(std::vector<Int_t> v_id, std::vector<Double_t> v_energy, bool CS, bool print = false);
         void fill_results(std::vector<Int_t> v_counts);
-        void fill_hist_sum(std::vector<Int_t> v_id, std::vector<Double_t> v_energy);
         void fill_photon_energy(Double_t energy) { hist_photon_energy->Fill(energy); }
         void show_histograms();
 

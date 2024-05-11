@@ -37,7 +37,6 @@ graphs::Histograms::Histograms(int n_pixel, std::shared_ptr<data::PSFInfo> psf) 
     hist_energy_central = new TH1D("TH1D central pixel energy", "Energy in the central pixel", N, 0, Options::get_instance().get_max_threshold());
     hist_energy_t = new TH1D("TH1D T pixels energy", "Energy in the T pixels", N, 0, Options::get_instance().get_max_threshold());
     hist_energy_tr = new TH1D("TH1D TR pixels energy", "Energy in the TR pixels", N, 0, Options::get_instance().get_max_threshold());
-    hist_energy_sum = new TH1D("TH1D 0+T+TR pixels energy", "Energy in the 9 central pixels", N, 0, Options::get_instance().get_max_threshold());
 
     hist_photon_energy = new TH1D("TH1D photon energy", "Original spectrum of the photon", 50, 0, Options::get_instance().get_max_threshold());
     hist_energy_central_corrected = new TH1D("TH1D reconstructed central pixel energy", "Energy in the central pixel (after reconstruction)", N, 0, Options::get_instance().get_max_threshold());
@@ -82,9 +81,6 @@ graphs::Histograms::~Histograms()
     delete hist_energy_tr;
     hist_energy_tr = nullptr;
 
-    delete hist_energy_sum;
-    hist_energy_sum = nullptr;
-
     delete hist_photon_energy;
     hist_photon_energy = nullptr;
 
@@ -96,6 +92,18 @@ graphs::Histograms::~Histograms()
 
     if (verbose)
         printf("INFO - Histograms destroyed.\n");
+
+    delete canvas_energy;
+    canvas_energy = nullptr;
+
+    delete canvas_energy_pixel;
+    canvas_energy_pixel = nullptr;
+
+    delete canvas_cross_talk;
+    canvas_cross_talk = nullptr;
+
+    delete canvas_reconstruction;
+    canvas_reconstruction = nullptr;
 }
 
 /**
@@ -159,8 +167,6 @@ void graphs::Histograms::fill_histograms(std::vector<Int_t> v_id, std::vector<Do
         printf("%s\nINFO - Filled histograms ", INFO_COLOR);
         (!CS) ? printf("(no CS). %s\n", END_COLOR) : printf("(with CS). %s\n", END_COLOR);
     }
-
-    fill_hist_sum(v_id, v_energy);
 }
 
 /**
@@ -176,52 +182,25 @@ void graphs::Histograms::fill_results(std::vector<Int_t> v_counts)
 }
 
 /**
- * Function for filling the histogram with the
- * sum of the 9 pixel considered (0 + T + TR).
- *
- * @param[in] v_id The vector containing the pixel IDs.
- * @param[in] v_energy The vector containing the pixel energies.
- */
-void graphs::Histograms::fill_hist_sum(std::vector<Int_t> v_id, std::vector<Double_t> v_energy)
-{
-    double sum = 0;
-    for (int i = 0; i < v_id.size(); i++)
-    {
-        if (v_id[i] == psf_info->id_pixel_0)
-            sum += v_energy[i];
-        else if (std::find(psf_info->id_pixel_t.begin(), psf_info->id_pixel_t.end(), v_id[i]) != psf_info->id_pixel_t.end())
-            sum += v_energy[i];
-        else if (std::find(psf_info->id_pixel_tr.begin(), psf_info->id_pixel_tr.end(), v_id[i]) != psf_info->id_pixel_tr.end())
-            sum += v_energy[i];
-    }
-
-    hist_energy_sum->Fill(sum);
-}
-
-/**
  * Function for displaying the histograms at the end of the program.
  */
 void graphs::Histograms::show_histograms()
 {
-    canvas_energy_spectrum = new TCanvas("Canvas E spectrum", "Energy Spectrum", 1400, 700);
-    canvas_energy_spectrum->Divide(2, 1);
-    canvas_energy_spectrum->cd(1);
+    canvas_energy = new TCanvas("Canvas E array", "Energy Spectrum and Total Energy", 1000, 1000);
+    canvas_energy->Divide(2, 2);
+    canvas_energy->cd(1);
     hist_energy_spectrum->Draw();
     hist_energy_spectrum->SetDirectory(nullptr);
-    canvas_energy_spectrum->cd(2);
+    canvas_energy->cd(2);
     hist_energy_spectrum_cs->Draw();
     hist_energy_spectrum_cs->SetDirectory(nullptr);
-    canvas_energy_spectrum->Update();
-
-    canvas_total_energy = new TCanvas("Canvas total E", "Total Energy", 1400, 700);
-    canvas_total_energy->Divide(2, 1);
-    canvas_total_energy->cd(1);
+    canvas_energy->cd(3);
     hist_total_energy->Draw();
     hist_total_energy->SetDirectory(nullptr);
-    canvas_total_energy->cd(2);
+    canvas_energy->cd(4);
     hist_total_energy_cs->Draw();
     hist_total_energy_cs->SetDirectory(nullptr);
-    canvas_total_energy->Update();
+    canvas_energy->Update();
 
     canvas_energy_pixel = new TCanvas("Canvas pixel E", "Energy per pixel", 1400, 700);
     canvas_energy_pixel->Divide(2, 1);
@@ -234,7 +213,7 @@ void graphs::Histograms::show_histograms()
     canvas_energy_pixel->Update();
 
     canvas_cross_talk = new TCanvas("Canvas cross-talk", "Study of cross-talk", 1400, 700);
-    canvas_cross_talk->Divide(4, 1);
+    canvas_cross_talk->Divide(3, 1);
     canvas_cross_talk->cd(1);
     hist_energy_central->Draw();
     hist_energy_central->SetDirectory(nullptr);
@@ -245,8 +224,6 @@ void graphs::Histograms::show_histograms()
     hist_energy_tr->Draw();
     hist_energy_tr->SetDirectory(nullptr);
     canvas_cross_talk->cd(4);
-    hist_energy_sum->Draw();
-    hist_energy_sum->SetDirectory(nullptr);
     canvas_cross_talk->Update();
 
     canvas_reconstruction = new TCanvas("Canvas reconstruction", "Spectrum Reconstruction", 1000, 1000);
@@ -273,6 +250,6 @@ void graphs::Histograms::show_histograms()
     if (verbose)
         printf("%sINFO - Canvases created.%s\n", INFO_COLOR, END_COLOR);
 
-    TRootCanvas *rc = static_cast<TRootCanvas *>(canvas_energy_spectrum->GetCanvasImp());
+    TRootCanvas *rc = static_cast<TRootCanvas *>(canvas_energy->GetCanvasImp());
     rc->Connect("CloseWindow()", "TApplication", gApplication, "Terminate()");
 }
