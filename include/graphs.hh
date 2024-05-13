@@ -43,7 +43,9 @@ namespace graphs
 
         TH1D *hist_photon_energy;
         TH1D *hist_energy_central_corrected;
+        TH1D *hist_energy_central_corrected_reference;
         THStack *hist_stack_corrections;
+        THStack *hist_stack_corrections_reference;
 
         std::shared_ptr<data::PSFInfo> psf_info;
 
@@ -57,6 +59,7 @@ namespace graphs
 
         void fill_histograms(std::vector<Int_t> v_id, std::vector<Double_t> v_energy, bool CS, bool print = false);
         void fill_results(std::vector<Int_t> v_counts);
+        void fill_reference(std::vector<Int_t> v_id, std::vector<Double_t> v_energy);
         void fill_photon_energy(Double_t energy) { hist_photon_energy->Fill(energy); }
         void show_histograms();
 

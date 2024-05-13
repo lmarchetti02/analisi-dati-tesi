@@ -40,7 +40,9 @@ graphs::Histograms::Histograms(int n_pixel, std::shared_ptr<data::PSFInfo> psf) 
 
     hist_photon_energy = new TH1D("TH1D photon energy", "Original spectrum of the photon", 50, 0, Options::get_instance().get_max_threshold());
     hist_energy_central_corrected = new TH1D("TH1D reconstructed central pixel energy", "Energy in the central pixel (after reconstruction)", N, 0, Options::get_instance().get_max_threshold());
+    hist_energy_central_corrected_reference = new TH1D("TH1D reconstructed central pixel energy (reference)", "Energy in the central pixel (after reference algorithm)", N, 0, Options::get_instance().get_max_threshold());
     hist_stack_corrections = new THStack("THStack central pixel corrections", "Energy before and after reconstruction");
+    hist_stack_corrections_reference = new THStack("THStack central pixel corrections", "Energy before and after reconstruction (reference)");
 
     printf("%sINFO - Histograms created.%s\n\n", INFO_COLOR, END_COLOR);
 
@@ -181,6 +183,17 @@ void graphs::Histograms::fill_results(std::vector<Int_t> v_counts)
         hist_energy_central_corrected->SetBinContent((i + 1), v_counts[i]);
 }
 
+void graphs::Histograms::fill_reference(std::vector<Int_t> v_id, std::vector<Double_t> v_energy)
+{
+    Int_t id_0 = (n_pixel / 2) * (1 + n_pixel);
+
+    for (int i = 0; i < v_id.size(); i++)
+    {
+        if (v_id[i] == id_0 && v_energy[i] > 0)
+            hist_energy_central_corrected_reference->Fill(v_energy[i]);
+    }
+}
+
 /**
  * Function for displaying the histograms at the end of the program.
  */
@@ -212,39 +225,46 @@ void graphs::Histograms::show_histograms()
     hist_energy_pixels_cs->SetDirectory(nullptr);
     canvas_energy_pixel->Update();
 
-    canvas_cross_talk = new TCanvas("Canvas cross-talk", "Study of cross-talk", 1400, 700);
-    canvas_cross_talk->Divide(3, 1);
-    canvas_cross_talk->cd(1);
-    hist_energy_central->Draw();
-    hist_energy_central->SetDirectory(nullptr);
-    canvas_cross_talk->cd(2);
-    hist_energy_t->Draw();
-    hist_energy_t->SetDirectory(nullptr);
-    canvas_cross_talk->cd(3);
-    hist_energy_tr->Draw();
-    hist_energy_tr->SetDirectory(nullptr);
-    canvas_cross_talk->cd(4);
-    canvas_cross_talk->Update();
+    // canvas_cross_talk = new TCanvas("Canvas cross-talk", "Study of cross-talk", 1400, 700);
+    // canvas_cross_talk->Divide(3, 1);
+    // canvas_cross_talk->cd(1);
+    // hist_energy_central->Draw();
+    // hist_energy_central->SetDirectory(nullptr);
+    // canvas_cross_talk->cd(2);
+    // hist_energy_t->Draw();
+    // hist_energy_t->SetDirectory(nullptr);
+    // canvas_cross_talk->cd(3);
+    // hist_energy_tr->Draw();
+    // hist_energy_tr->SetDirectory(nullptr);
+    // canvas_cross_talk->cd(4);
+    // canvas_cross_talk->Update();
 
-    canvas_reconstruction = new TCanvas("Canvas reconstruction", "Spectrum Reconstruction", 1000, 1000);
-    canvas_reconstruction->Divide(2, 2);
+    canvas_reconstruction = new TCanvas("Canvas reconstruction", "Spectrum Reconstruction", 1500, 1000);
+    canvas_reconstruction->Divide(3, 2);
     canvas_reconstruction->cd(1);
     hist_energy_central->Draw();
     hist_energy_central->SetDirectory(nullptr);
     canvas_reconstruction->cd(2);
     hist_energy_central_corrected->Draw();
     hist_energy_central_corrected->SetDirectory(nullptr);
-    canvas_reconstruction->Update();
-    canvas_reconstruction->cd(3);
+    canvas_reconstruction->cd(4);
     hist_photon_energy->Draw();
     hist_photon_energy->SetDirectory(nullptr);
-    canvas_reconstruction->Update();
-    canvas_reconstruction->cd(4);
+    canvas_reconstruction->cd(5);
     hist_stack_corrections->Add(hist_energy_central);
     TH1D *hist_energy_central_corrected_clone = static_cast<TH1D *>(hist_energy_central_corrected->Clone());
     hist_stack_corrections->Add(hist_energy_central_corrected_clone);
     hist_energy_central_corrected_clone->SetFillColor(2);
     hist_stack_corrections->Draw("nostack");
+    canvas_reconstruction->cd(3);
+    hist_energy_central_corrected_reference->Draw();
+    hist_energy_central_corrected_reference->SetDirectory(nullptr);
+    canvas_reconstruction->cd(6);
+    hist_stack_corrections_reference->Add(hist_energy_central);
+    TH1D *hist_energy_central_corrected_reference_clone = static_cast<TH1D *>(hist_energy_central_corrected_reference->Clone());
+    hist_stack_corrections_reference->Add(hist_energy_central_corrected_reference_clone);
+    hist_energy_central_corrected_reference_clone->SetFillColor(3);
+    hist_stack_corrections_reference->Draw("nostack");
     canvas_reconstruction->Update();
 
     if (verbose)

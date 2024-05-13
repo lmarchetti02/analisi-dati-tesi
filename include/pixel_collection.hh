@@ -9,12 +9,14 @@
 namespace pixel
 {
     /**
-     *
+     * Structure for storing
+     * the counts in the pixels
+     * relative to an event.
      */
     struct EventCounts
     {
-        int type;
-        int bin;
+        int type; // The type of pixel (0, T, TR,...)
+        int bin;  // The energy bin
 
         void reset() { bin = -1; }
     };

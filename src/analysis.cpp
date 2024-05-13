@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <tuple>
 
 #include "TFile.h"
 #include "TTree.h"
@@ -9,6 +10,7 @@
 #include "options.hh"
 #include "constants.hh"
 #include "pixel_collection.hh"
+#include "reference.hh"
 
 /**
  * The default constructor.
@@ -132,6 +134,7 @@ void analysis::Analysis::get_trees()
  */
 void analysis::Analysis::run() const
 {
+
     std::string choice = " ";
     for (int i = 0; i < event_tree->GetEntries(); i++)
     {
@@ -146,6 +149,14 @@ void analysis::Analysis::run() const
             printf("%sINFO - %i entries processed.%s\n", INFO_COLOR, i, END_COLOR);
 
         data::Entry entry = event->get_entry();
+        if (entry.id_pixel.size())
+        {
+            const auto [ids, energies] = reference_algorithm::cluster(std::make_tuple(
+                                                                          entry.id_pixel_cs,
+                                                                          entry.pixel_energy_cs),
+                                                                      info->get_n_pixel());
+            hist->fill_reference(ids, energies);
+        }
 
         if (choice != 'g')
         {
