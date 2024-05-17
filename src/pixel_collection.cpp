@@ -1,10 +1,10 @@
 #include "pixel_collection.hh"
 
-#include <fstream>
-#include <filesystem>
-#include <stdexcept>
-
 #include "options.hh"
+
+#include <filesystem>
+#include <fstream>
+#include <stdexcept>
 
 bool pixel::PixelCollection::verbose = false;
 
@@ -17,15 +17,15 @@ const std::filesystem::path counts_path{"../output/pixel_0_counts.csv"};
  * @param[in] psf The pointer to the structure containing the info about
  * the point spread function to consider.
  */
-pixel::PixelCollection::PixelCollection(std::shared_ptr<data::PSFInfo> psf) : psf_info(psf)
+pixel::PixelCollection::PixelCollection(std::shared_ptr<data::PSFInfo> psf)
+    : psf_info(psf)
 {
     options::Options &opt = options::Options::get_instance();
 
     bin_size = opt.get_threshold_step();
     int n_thr = opt.get_n_thresholds();
 
-    for (int i = 0; i < n_thr; i++)
-    {
+    for (int i = 0; i < n_thr; i++) {
         energy_measured[0].push_back(0);
         energy_measured[1].push_back(0);
 
@@ -53,7 +53,8 @@ void pixel::PixelCollection::fill_collection(double energy, int type)
 
     constexpr std::array<const char *, 2> debug = {"0", "T"};
     if (verbose)
-        printf("%sDEBUG - Pixel %s - Energy %.4f GeV - Bin %i%s\n", DEBUG_COLOR, debug[type], energy, get_bin(energy), END_COLOR);
+        printf("%sDEBUG - Pixel %s - Energy %.4f GeV - Bin %i%s\n", DEBUG_COLOR, debug[type], energy, get_bin(energy),
+               END_COLOR);
 }
 
 /**
@@ -64,10 +65,8 @@ void pixel::PixelCollection::print_correlations() const
 {
     printf("CORRELATIONS 0-T\n");
     printf("----------------\n");
-    for (int i = 0; i < counts_and[0].size(); i++)
-    {
-        if (!i)
-        {
+    for (int i = 0; i < counts_and[0].size(); i++) {
+        if (!i) {
             printf("     ");
             for (int i = 0; i < counts_and[0][0].size(); i++)
                 printf("%6i ", i);
@@ -98,37 +97,30 @@ void pixel::PixelCollection::add_event(std::vector<int> v_id, std::vector<double
     for (auto &e : event_counts)
         e.reset();
 
-    for (int i = 0; i < v_id.size(); i++)
-    {
+    for (int i = 0; i < v_id.size(); i++) {
         int id = v_id[i];
         double energy = v_energy[i];
         double bin = get_bin(energy);
 
-        if (id == psf_info->id_pixel_0)
-        {
+        if (id == psf_info->id_pixel_0) {
             fill_collection(energy, 0);
             event_counts[0].bin = bin;
-        }
-        else if (id == psf_info->id_pixel_t[0])
-        {
+        } else if (id == psf_info->id_pixel_t[0]) {
             fill_collection(energy, 1);
             event_counts[1].bin = bin;
         }
     }
 
-    if (verbose)
-    {
+    if (verbose) {
         printf(DEBUG_COLOR);
         for (auto &e : event_counts)
             printf("DEBUG - Pixel %i: bin %i\n", e.type, e.bin);
         printf(END_COLOR);
     }
 
-    if (event_counts[0].bin >= 0 && event_counts[1].bin >= 0)
-        counts_and[0][event_counts[0].bin][event_counts[1].bin]++;
+    if (event_counts[0].bin >= 0 && event_counts[1].bin >= 0) counts_and[0][event_counts[0].bin][event_counts[1].bin]++;
 
-    if (verbose)
-    {
+    if (verbose) {
         printf(DEBUG_COLOR);
         print_correlations();
         printf(END_COLOR);
@@ -145,40 +137,17 @@ void pixel::PixelCollection::reconstruct_spectrum(int beam_width)
 {
     int N = options::Options::get_instance().get_n_thresholds();
 
-    if (!beam_width)
-    {
-        for (int i = 0; i < N; i++)
-        {
-            int correction_1 = 0;
-            int correction_2 = 0;
+    for (int i = 0; i < N; i++) {
+        int correction_1 = 0;
+        int correction_2 = 0;
 
-            for (int j = 0; j < i; j++)
-                correction_1 += 4 * counts_and[0][j][i - j];
+        for (int j = 1; j < N - i; j++)
+            correction_1 += counts_and[0][j][i];
 
-            for (int j = i + 1; j < N; j++)
-                correction_2 += 4 * counts_and[0][i][j - i];
+        for (int j = 0; j < i; j++)
+            correction_2 += counts_and[0][i - j][j];
 
-            energy_corrected[0][i] = energy_measured[0][i] + correction_1 - correction_2;
-        }
-    }
-    else
-    {
-        for (int i = 0; i < N; i++)
-        {
-            int correction_1 = 0;
-            int correction_2 = 0;
-
-            if (i)
-                for (int j = 0; j < i; j++)
-                    correction_1 += 2 * counts_and[0][i - j][j];
-            else
-                correction_1 += -2 * counts_and[0][0][0];
-
-            for (int j = 1; j < N - i; j++)
-                correction_2 += 4 * counts_and[0][j][i];
-
-            energy_corrected[0][i] = energy_measured[0][i] + correction_1 - correction_2;
-        }
+        energy_corrected[0][i] = energy_measured[0][i] - 4 * correction_1 + 4 * correction_2 - 2 * counts_and[0][i][0];
     }
 }
 
@@ -223,8 +192,7 @@ void pixel::PixelCollection::save_output()
 
     // save counts
     counts_file.open(counts_path, std::ios::out);
-    if (!counts_file.is_open())
-        throw std::runtime_error("");
+    if (!counts_file.is_open()) throw std::runtime_error("");
 
     counts_file << "Bin,Counts\n";
     for (int i = 0; i < energy_measured[0].size(); i++)
@@ -232,12 +200,10 @@ void pixel::PixelCollection::save_output()
 
     // save and
     and_file.open(and_path, std::ios::out);
-    if (!and_file.is_open())
-        throw std::runtime_error("");
+    if (!and_file.is_open()) throw std::runtime_error("");
 
     and_file << "Bin 0, Bin T,Counts\n";
-    for (int i = 0; i < counts_and[0].size(); i++)
-    {
+    for (int i = 0; i < counts_and[0].size(); i++) {
         for (int j = 0; j < counts_and[0][i].size(); j++)
             and_file << i << "," << j << "," << counts_and[0][i][j] << "\n";
     }

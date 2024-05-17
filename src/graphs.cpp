@@ -1,13 +1,12 @@
 #include "graphs.hh"
 
-#include <algorithm>
-#include <array>
-
-#include "TRootCanvas.h"
 #include "TApplication.h"
-
+#include "TRootCanvas.h"
 #include "constants.hh"
 #include "options.hh"
+
+#include <algorithm>
+#include <array>
 
 bool graphs::Histograms::verbose = false;
 
@@ -19,7 +18,8 @@ bool graphs::Histograms::verbose = false;
  * @param[in] n_pixel The number of pixels per side of the array.
  * @param[in] psf The pointer to the PSFInfo structure.
  */
-graphs::Histograms::Histograms(int n_pixel, std::shared_ptr<data::PSFInfo> psf) : psf_info(psf)
+graphs::Histograms::Histograms(int n_pixel, std::shared_ptr<data::PSFInfo> psf)
+    : psf_info(psf)
 {
     using namespace options;
 
@@ -29,20 +29,31 @@ graphs::Histograms::Histograms(int n_pixel, std::shared_ptr<data::PSFInfo> psf) 
     hist_total_energy = new TH1D("TH1D total energy", "Total energy (no charge sharing)", 100, 0, 0.1);
     hist_total_energy_cs = new TH1D("TH1D total energy CS", "Total energy (with charge sharing)", 100, 0, 0.1);
 
-    hist_energy_pixels = new TH2D("TH2D pixel energy", "Energy per pixel (no charge sharing)", n_pixel, -0.5, n_pixel - 0.5, n_pixel, -0.5, n_pixel - 0.5);
-    hist_energy_pixels_cs = new TH2D("TH2D pixel energy CS", "Energy per pixel (with charge sharing)", n_pixel, -0.5, n_pixel - 0.5, n_pixel, -0.5, n_pixel - 0.5);
+    hist_energy_pixels = new TH2D("TH2D pixel energy", "Energy per pixel (no charge sharing)", n_pixel, -0.5,
+                                  n_pixel - 0.5, n_pixel, -0.5, n_pixel - 0.5);
+    hist_energy_pixels_cs = new TH2D("TH2D pixel energy CS", "Energy per pixel (with charge sharing)", n_pixel, -0.5,
+                                     n_pixel - 0.5, n_pixel, -0.5, n_pixel - 0.5);
 
     int N = Options::get_instance().get_n_thresholds();
 
-    hist_energy_central = new TH1D("TH1D central pixel energy", "Energy in the central pixel", N, 0, Options::get_instance().get_max_threshold());
-    hist_energy_t = new TH1D("TH1D T pixels energy", "Energy in the T pixels", N, 0, Options::get_instance().get_max_threshold());
-    hist_energy_tr = new TH1D("TH1D TR pixels energy", "Energy in the TR pixels", N, 0, Options::get_instance().get_max_threshold());
+    hist_energy_central = new TH1D("TH1D central pixel energy", "Energy in the central pixel", N, 0,
+                                   Options::get_instance().get_max_threshold());
+    hist_energy_t =
+        new TH1D("TH1D T pixels energy", "Energy in the T pixels", N, 0, Options::get_instance().get_max_threshold());
+    hist_energy_tr =
+        new TH1D("TH1D TR pixels energy", "Energy in the TR pixels", N, 0, Options::get_instance().get_max_threshold());
 
-    hist_photon_energy = new TH1D("TH1D photon energy", "Original spectrum of the photon", 50, 0, Options::get_instance().get_max_threshold());
-    hist_energy_central_corrected = new TH1D("TH1D reconstructed central pixel energy", "Energy in the central pixel (after reconstruction)", N, 0, Options::get_instance().get_max_threshold());
-    hist_energy_central_corrected_reference = new TH1D("TH1D reconstructed central pixel energy (reference)", "Energy in the central pixel (after reference algorithm)", N, 0, Options::get_instance().get_max_threshold());
+    hist_photon_energy = new TH1D("TH1D photon energy", "Original spectrum of the photon", 50, 0,
+                                  Options::get_instance().get_max_threshold());
+    hist_energy_central_corrected =
+        new TH1D("TH1D reconstructed central pixel energy", "Energy in the central pixel (after reconstruction)", N, 0,
+                 Options::get_instance().get_max_threshold());
+    hist_energy_central_corrected_reference = new TH1D("TH1D reconstructed central pixel energy (reference)",
+                                                       "Energy in the central pixel (after reference algorithm)", N, 0,
+                                                       Options::get_instance().get_max_threshold());
     hist_stack_corrections = new THStack("THStack central pixel corrections", "Energy before and after reconstruction");
-    hist_stack_corrections_reference = new THStack("THStack central pixel corrections", "Energy before and after reconstruction (reference)");
+    hist_stack_corrections_reference =
+        new THStack("THStack central pixel corrections", "Energy before and after reconstruction (reference)");
 
     printf("%sINFO - Histograms created.%s\n\n", INFO_COLOR, END_COLOR);
 
@@ -92,8 +103,7 @@ graphs::Histograms::~Histograms()
     delete hist_stack_corrections;
     hist_stack_corrections = nullptr;
 
-    if (verbose)
-        printf("INFO - Histograms destroyed.\n");
+    if (verbose) printf("INFO - Histograms destroyed.\n");
 
     delete canvas_energy;
     canvas_energy = nullptr;
@@ -117,8 +127,7 @@ graphs::Histograms::~Histograms()
  */
 void graphs::Histograms::fill_psf_histograms(int id, double energy)
 {
-    if (id == psf_info->id_pixel_0)
-        hist_energy_central->Fill(energy);
+    if (id == psf_info->id_pixel_0) hist_energy_central->Fill(energy);
     else if (std::find(psf_info->id_pixel_t.begin(), psf_info->id_pixel_t.end(), id) != psf_info->id_pixel_t.end())
         hist_energy_t->Fill(energy);
     else if (std::find(psf_info->id_pixel_tr.begin(), psf_info->id_pixel_tr.end(), id) != psf_info->id_pixel_tr.end())
@@ -137,35 +146,28 @@ void graphs::Histograms::fill_histograms(std::vector<Int_t> v_id, std::vector<Do
 {
     double total_energy = 0;
     int limit = v_energy.size();
-    for (int i = 0; i < limit; i++)
-    {
+    for (int i = 0; i < limit; i++) {
         double energy = v_energy.at(i);
 
         total_energy += energy;
-        if (energy > 0)
-            (!CS) ? hist_energy_spectrum->Fill(energy) : hist_energy_spectrum_cs->Fill(energy);
+        if (energy > 0) (!CS) ? hist_energy_spectrum->Fill(energy) : hist_energy_spectrum_cs->Fill(energy);
 
         int ID = v_id.at(i);
         int ID_y = ID / n_pixel;
         int ID_x = ID - ID_y * n_pixel;
-        if (verbose)
-            printf("%sDEBUG - ID_x = %i; ID_y = %i%s\n", DEBUG_COLOR, ID_x, ID_y, END_COLOR);
+        if (verbose) printf("%sDEBUG - ID_x = %i; ID_y = %i%s\n", DEBUG_COLOR, ID_x, ID_y, END_COLOR);
 
         (!CS) ? hist_energy_pixels->Fill(ID_x, ID_y, energy) : hist_energy_pixels_cs->Fill(ID_x, ID_y, energy);
 
         // fill 0, T and TR histograms
-        if (CS)
-            fill_psf_histograms(ID, energy);
+        if (CS) fill_psf_histograms(ID, energy);
 
-        if (print)
-            printf("ID = %i; Energy = %f GeV\n", ID, energy);
+        if (print) printf("ID = %i; Energy = %f GeV\n", ID, energy);
     }
     (!CS) ? hist_total_energy->Fill(total_energy) : hist_total_energy_cs->Fill(total_energy);
-    if (print)
-        printf("Total energy = %f GeV\n", total_energy);
+    if (print) printf("Total energy = %f GeV\n", total_energy);
 
-    if (verbose)
-    {
+    if (verbose) {
         printf("%s\nINFO - Filled histograms ", INFO_COLOR);
         (!CS) ? printf("(no CS). %s\n", END_COLOR) : printf("(with CS). %s\n", END_COLOR);
     }
@@ -187,10 +189,8 @@ void graphs::Histograms::fill_reference(std::vector<Int_t> v_id, std::vector<Dou
 {
     Int_t id_0 = (n_pixel / 2) * (1 + n_pixel);
 
-    for (int i = 0; i < v_id.size(); i++)
-    {
-        if (v_id[i] == id_0 && v_energy[i] > 0)
-            hist_energy_central_corrected_reference->Fill(v_energy[i]);
+    for (int i = 0; i < v_id.size(); i++) {
+        if (v_id[i] == id_0 && v_energy[i] > 0) hist_energy_central_corrected_reference->Fill(v_energy[i]);
     }
 }
 
@@ -199,7 +199,7 @@ void graphs::Histograms::fill_reference(std::vector<Int_t> v_id, std::vector<Dou
  */
 void graphs::Histograms::show_histograms()
 {
-    canvas_energy = new TCanvas("Canvas E array", "Energy Spectrum and Total Energy", 1000, 1000);
+    canvas_energy = new TCanvas("Canvas E array", "Energy Spectrum and Total Energy", 1'000, 1'000);
     canvas_energy->Divide(2, 2);
     canvas_energy->cd(1);
     hist_energy_spectrum->Draw();
@@ -215,7 +215,7 @@ void graphs::Histograms::show_histograms()
     hist_total_energy_cs->SetDirectory(nullptr);
     canvas_energy->Update();
 
-    canvas_energy_pixel = new TCanvas("Canvas pixel E", "Energy per pixel", 1400, 700);
+    canvas_energy_pixel = new TCanvas("Canvas pixel E", "Energy per pixel", 1'400, 700);
     canvas_energy_pixel->Divide(2, 1);
     canvas_energy_pixel->cd(1);
     hist_energy_pixels->Draw();
@@ -239,7 +239,7 @@ void graphs::Histograms::show_histograms()
     // canvas_cross_talk->cd(4);
     // canvas_cross_talk->Update();
 
-    canvas_reconstruction = new TCanvas("Canvas reconstruction", "Spectrum Reconstruction", 1500, 1000);
+    canvas_reconstruction = new TCanvas("Canvas reconstruction", "Spectrum Reconstruction", 1'500, 1'000);
     canvas_reconstruction->Divide(3, 2);
     canvas_reconstruction->cd(1);
     hist_energy_central->Draw();
@@ -261,14 +261,14 @@ void graphs::Histograms::show_histograms()
     hist_energy_central_corrected_reference->SetDirectory(nullptr);
     canvas_reconstruction->cd(6);
     hist_stack_corrections_reference->Add(hist_energy_central);
-    TH1D *hist_energy_central_corrected_reference_clone = static_cast<TH1D *>(hist_energy_central_corrected_reference->Clone());
+    TH1D *hist_energy_central_corrected_reference_clone =
+        static_cast<TH1D *>(hist_energy_central_corrected_reference->Clone());
     hist_stack_corrections_reference->Add(hist_energy_central_corrected_reference_clone);
     hist_energy_central_corrected_reference_clone->SetFillColor(3);
     hist_stack_corrections_reference->Draw("nostack");
     canvas_reconstruction->Update();
 
-    if (verbose)
-        printf("%sINFO - Canvases created.%s\n", INFO_COLOR, END_COLOR);
+    if (verbose) printf("%sINFO - Canvases created.%s\n", INFO_COLOR, END_COLOR);
 
     TRootCanvas *rc = static_cast<TRootCanvas *>(canvas_energy->GetCanvasImp());
     rc->Connect("CloseWindow()", "TApplication", gApplication, "Terminate()");

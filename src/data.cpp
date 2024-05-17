@@ -13,7 +13,8 @@ void data::PSFInfo::get_ids(int n_pixel)
 {
     id_pixel_0 = (n_pixel / 2) * (1 + n_pixel);
     id_pixel_t = {id_pixel_0 - n_pixel, id_pixel_0 - 1, id_pixel_0 + 1, id_pixel_0 + n_pixel};
-    id_pixel_tr = {id_pixel_0 - n_pixel - 1, id_pixel_0 - n_pixel + 1, id_pixel_0 + n_pixel - 1, id_pixel_0 + n_pixel + 1};
+    id_pixel_tr = {id_pixel_0 - n_pixel - 1, id_pixel_0 - n_pixel + 1, id_pixel_0 + n_pixel - 1,
+                   id_pixel_0 + n_pixel + 1};
 
     printf("Pixel 0: %i\n", id_pixel_0);
 

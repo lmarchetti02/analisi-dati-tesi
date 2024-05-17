@@ -1,16 +1,15 @@
 #include "analysis.hh"
 
+#include "TFile.h"
+#include "TTree.h"
+#include "constants.hh"
+#include "options.hh"
+#include "pixel_collection.hh"
+#include "reference.hh"
+
 #include <iostream>
 #include <stdexcept>
 #include <tuple>
-
-#include "TFile.h"
-#include "TTree.h"
-
-#include "options.hh"
-#include "constants.hh"
-#include "pixel_collection.hh"
-#include "reference.hh"
 
 /**
  * The default constructor.
@@ -24,8 +23,7 @@ analysis::Analysis::Analysis()
     options::Options &opt = options::Options::get_instance();
 
     std::string opt_choice;
-    while (true)
-    {
+    while (true) {
         printf("\nType:\n");
         printf("- 's' to start the analysis\n");
         printf("- 'c' to see the current options\n");
@@ -33,21 +31,15 @@ analysis::Analysis::Analysis()
         printf("- 'e' to exit\n");
         std::getline(std::cin, opt_choice);
 
-        if (opt_choice.length() == 0 || opt_choice.length() > 1)
-            continue;
+        if (opt_choice.length() == 0 || opt_choice.length() > 1) continue;
 
-        if (opt_choice == "e")
-            std::exit(0);
+        if (opt_choice == "e") std::exit(0);
 
-        if (opt_choice == "s")
-            break;
-        else if (opt_choice == "c")
-        {
+        if (opt_choice == "s") break;
+        else if (opt_choice == "c") {
             clear_screen();
             opt.print_options();
-        }
-        else if (opt_choice == "m")
-        {
+        } else if (opt_choice == "m") {
             clear_screen();
             opt.change_options();
         }
@@ -58,10 +50,7 @@ analysis::Analysis::Analysis()
 /**
  * The default destructor.
  */
-analysis::Analysis::~Analysis()
-{
-    results_file->Close();
-}
+analysis::Analysis::~Analysis() { results_file->Close(); }
 
 /**
  * Function for showing the results of the
@@ -93,22 +82,19 @@ void analysis::Analysis::get_trees()
 
     // open file and get trees
     results_file = std::make_unique<TFile>(file_name, "READ");
-    if (!results_file->IsOpen())
-    {
+    if (!results_file->IsOpen()) {
         printf("%sERROR - Impossible to open %s%s\n", ERROR_COLOR, file_name, END_COLOR);
         throw std::runtime_error("");
     }
 
     info_tree = static_cast<TTree *>(results_file->Get("Info"));
-    if (!info_tree)
-    {
+    if (!info_tree) {
         printf("%sERROR - Impossible to load TTree Info %s\n", ERROR_COLOR, END_COLOR);
         throw std::runtime_error("");
     }
 
     event_tree = static_cast<TTree *>(results_file->Get("Event"));
-    if (!event_tree)
-    {
+    if (!event_tree) {
         printf("%sERROR - Impossible to load TTree Event %s\n", ERROR_COLOR, END_COLOR);
         throw std::runtime_error("");
     }
@@ -120,8 +106,7 @@ void analysis::Analysis::get_trees()
     pixel_collection = std::make_unique<pixel::PixelCollection>(info->get_psf_info());
 
     // set verbosity
-    if (verbosity)
-    {
+    if (verbosity) {
         data::Info::set_verbose(true);
         data::Event::set_verbose(true);
         graphs::Histograms::set_verbose(true);
@@ -136,30 +121,22 @@ void analysis::Analysis::run() const
 {
 
     std::string choice = " ";
-    for (int i = 0; i < event_tree->GetEntries(); i++)
-    {
-        if (choice == 'e')
-            std::exit(0);
+    for (int i = 0; i < event_tree->GetEntries(); i++) {
+        if (choice == 'e') std::exit(0);
 
-        if (choice == 's')
-            break;
+        if (choice == 's') break;
 
         event_tree->GetEntry(i);
-        if (i % 10000 == 0 && i != 0)
-            printf("%sINFO - %i entries processed.%s\n", INFO_COLOR, i, END_COLOR);
+        if (i % 10'000 == 0 && i != 0) printf("%sINFO - %i entries processed.%s\n", INFO_COLOR, i, END_COLOR);
 
         data::Entry entry = event->get_entry();
-        if (entry.id_pixel.size())
-        {
-            const auto [ids, energies] = reference_algorithm::cluster(std::make_tuple(
-                                                                          entry.id_pixel_cs,
-                                                                          entry.pixel_energy_cs),
-                                                                      info->get_n_pixel());
+        if (entry.id_pixel.size()) {
+            const auto [ids, energies] = reference_algorithm::cluster(
+                std::make_tuple(entry.id_pixel_cs, entry.pixel_energy_cs), info->get_n_pixel());
             hist->fill_reference(ids, energies);
         }
 
-        if (choice != 'g')
-        {
+        if (choice != 'g') {
             (i != 0) ? printf("\033c") : printf("");
             printf("Entry number = %i\n", i);
             printf("Event ID = %i\n\n", entry.event_id);
@@ -183,8 +160,7 @@ void analysis::Analysis::run() const
             printf("- 'e' to exit\n");
             printf("- anything else to continue\n");
             std::getline(std::cin, choice);
-            if (choice.length() == 0)
-                continue;
+            if (choice.length() == 0) continue;
         }
 
         pixel_collection->add_event(entry.id_pixel_cs, entry.pixel_energy_cs);

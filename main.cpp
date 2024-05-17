@@ -1,9 +1,8 @@
-#include <iostream>
-#include <filesystem>
-
 #include "TApplication.h"
-
 #include "analysis.hh"
+
+#include <filesystem>
+#include <iostream>
 
 int main(int argc, char **argv)
 {
@@ -17,13 +16,10 @@ int main(int argc, char **argv)
 
     analysis::Analysis analysis = analysis::Analysis();
 
-    try
-    {
+    try {
         analysis.get_trees();
         analysis.run();
-    }
-    catch (std::runtime_error &e)
-    {
+    } catch (std::runtime_error &e) {
         std::cerr << e.what() << std::endl;
         return 1;
     }
