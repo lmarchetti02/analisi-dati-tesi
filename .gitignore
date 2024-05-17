@@ -43,3 +43,4 @@ compile_commands.json
 *.root
 /plots
 /utils/options.txt
+.clang-format
