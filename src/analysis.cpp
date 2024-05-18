@@ -75,9 +75,9 @@ void analysis::Analysis::get_trees()
     options::Options &opt = options::Options::get_instance();
 
     // get ROOT file name and verbosity
-    char file_name[100];
+    char file_name[150];
     strcpy(file_name, "../results/");
-    strncat(file_name, opt.get_filename().c_str(), 30);
+    strncat(file_name, opt.get_filename().c_str(), 50);
     bool verbosity = opt.get_verbosity();
 
     // open file and get trees

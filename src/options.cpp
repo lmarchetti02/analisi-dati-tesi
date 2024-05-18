@@ -9,11 +9,12 @@
 #include <iostream>
 
 const std::filesystem::path options_path{"../utils/options.txt"};
+const std::filesystem::path results_path{"../results"};
 constexpr std::array<const char *, 5> options_keys{"ROOT_FILE", "N_THR", "MIN_THR", "MAX_THR", "VERBOSITY"};
 constexpr const char FILENAME_DEF[] = "output0.root";
 constexpr int N_THRESHOLDS_DEF = 50;
 constexpr double MIN_THRESHOLD_DEF = 0.0;
-constexpr double MAX_THRESHOLD_DEF = 0.1;
+constexpr double MAX_THRESHOLD_DEF = 0.11;
 constexpr bool VERBOSITY_DEF = false;
 
 /**
@@ -127,6 +128,32 @@ void options::Options::save_to_file() const
 }
 
 /**
+ * Function for getting the root file
+ * where the results are stored.
+ *
+ * @return The string with the file name.
+ */
+std::string options::Options::results_files()
+{
+    std::vector<std::filesystem::path> filenames;
+
+    printf("\n");
+
+    int counter = 0;
+    for (const auto &entry : std::filesystem::directory_iterator(results_path)) {
+        printf("%i. %s\n", counter, entry.path().c_str());
+        filenames.push_back(entry.path());
+        counter++;
+    }
+
+    std::string input{};
+    std::getline(std::cin, input);
+    int index = std::stoi(input);
+
+    return filenames[index].filename().string();
+}
+
+/**
  * Function for printing the current options.
  */
 void options::Options::print_options() const
@@ -158,7 +185,7 @@ void options::Options::change_options()
         char num;
         std::string choice{};
         std::getline(std::cin, choice);
-        if (choice.length() > 1) continue;
+        if (choice.length() > 1 || !choice.length()) continue;
 
         num = choice[0];
         if (num != 'd' && num != 'x') printf("New value: ");
@@ -166,7 +193,7 @@ void options::Options::change_options()
         std::string input{};
         switch (num) {
         case '1':
-            std::getline(std::cin, filename);
+            filename = results_files();
             break;
         case '2':
             std::getline(std::cin, input);

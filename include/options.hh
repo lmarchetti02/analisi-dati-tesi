@@ -1,6 +1,5 @@
 #pragma once
 
-#include <array>
 #include <string>
 
 namespace options
@@ -21,6 +20,8 @@ class Options
 
     void set_default();
     void save_to_file() const;
+
+    std::string results_files();
 
   public:
     static Options &get_instance();
