@@ -220,7 +220,7 @@ void pixel::PixelCollection::save_output()
         for (int j = 0; j < counts_and[0][i].size(); j++) {
             double probability = 4. * counts_and[0][i][j] / energy_corrected[0][i + j];
             if (std::isnan(probability)) probability = 0.0;
-            else if (probability > 2) probability = 2;
+            else if (probability > 2 || probability < 0) probability = 2;
             probabilities_file << i << "," << j << "," << probability << "\n";
         }
     }
