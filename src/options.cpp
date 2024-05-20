@@ -11,7 +11,7 @@
 const std::filesystem::path options_path{"../utils/options.txt"};
 const std::filesystem::path results_path{"../results"};
 constexpr std::array<const char *, 5> options_keys{"ROOT_FILE", "N_THR", "MIN_THR", "MAX_THR", "VERBOSITY"};
-constexpr const char FILENAME_DEF[] = "output0.root";
+constexpr const char FILENAME_DEF[] = "uniform_mono.root";
 constexpr int N_THRESHOLDS_DEF = 50;
 constexpr double MIN_THRESHOLD_DEF = 0.0;
 constexpr double MAX_THRESHOLD_DEF = 0.11;
@@ -113,7 +113,7 @@ void options::Options::save_to_file() const
         return;
     }
 
-    int w = 20;
+    int w = 50;
     const auto &[ROOT_FILE, N_THR, MIN_THR, MAX_THR, VERBOSITY] = options_keys;
 
     options_file << std::setw(w / 2) << ROOT_FILE << std::setw(w) << filename << "\n";

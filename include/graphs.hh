@@ -33,16 +33,16 @@ class Histograms
     TH1D *hist_energy_t;
     TH1D *hist_energy_tr;
 
-    TCanvas *canvas_energy;
-    TCanvas *canvas_energy_pixel;
-    TCanvas *canvas_cross_talk;
-    TCanvas *canvas_reconstruction;
-
     TH1D *hist_photon_energy;
     TH1D *hist_energy_central_corrected;
     TH1D *hist_energy_central_corrected_reference;
     THStack *hist_stack_corrections;
     THStack *hist_stack_corrections_reference;
+
+    TCanvas *canvas_energy;
+    TCanvas *canvas_energy_pixel;
+    TCanvas *canvas_cross_talk;
+    TCanvas *canvas_reconstruction;
 
     std::shared_ptr<data::PSFInfo> psf_info;
 

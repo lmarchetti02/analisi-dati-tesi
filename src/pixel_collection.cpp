@@ -2,6 +2,7 @@
 
 #include "options.hh"
 
+#include <cmath>
 #include <filesystem>
 #include <fstream>
 #include <stdexcept>
@@ -10,6 +11,7 @@ bool pixel::PixelCollection::verbose = false;
 
 const std::filesystem::path and_path{"../output/0T_and_matrix.csv"};
 const std::filesystem::path counts_path{"../output/pixel_0_counts.csv"};
+const std::filesystem::path probabilities_path{"../output/transition_probabilities.csv"};
 
 /**
  * The default constructor.
@@ -189,6 +191,7 @@ void pixel::PixelCollection::save_output()
 {
     std::fstream and_file;
     std::fstream counts_file;
+    std::fstream probabilities_file;
 
     // save counts
     counts_file.open(counts_path, std::ios::out);
@@ -208,7 +211,22 @@ void pixel::PixelCollection::save_output()
             and_file << i << "," << j << "," << counts_and[0][i][j] << "\n";
     }
 
+    // save probabilities
+    probabilities_file.open(probabilities_path, std::ios::out);
+    if (!and_file.is_open()) throw std::runtime_error("");
+
+    probabilities_file << "Bin i, Bin j, Probability\n";
+    for (int i = 0; i < counts_and[0].size(); i++) {
+        for (int j = 0; j < counts_and[0][i].size(); j++) {
+            double probability = 4. * counts_and[0][i][j] / energy_corrected[0][i + j];
+            if (std::isnan(probability)) probability = 0.0;
+            else if (probability > 2) probability = 2;
+            probabilities_file << i << "," << j << "," << probability << "\n";
+        }
+    }
+
     // close files
     counts_file.close();
     and_file.close();
+    probabilities_file.close();
 }

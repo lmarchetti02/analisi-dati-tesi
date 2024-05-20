@@ -5,6 +5,7 @@
 #include "constants.hh"
 #include "options.hh"
 
+#include <TH1.h>
 #include <algorithm>
 #include <array>
 
@@ -103,7 +104,7 @@ graphs::Histograms::~Histograms()
     delete hist_stack_corrections;
     hist_stack_corrections = nullptr;
 
-    if (verbose) printf("INFO - Histograms destroyed.\n");
+    if (verbose) print_info("INFO - Histograms destroyed.\n");
 
     delete canvas_energy;
     canvas_energy = nullptr;
@@ -116,6 +117,8 @@ graphs::Histograms::~Histograms()
 
     delete canvas_reconstruction;
     canvas_reconstruction = nullptr;
+
+    if (verbose) print_info("INFO - Canvases destroyed.\n");
 }
 
 /**
@@ -181,6 +184,7 @@ void graphs::Histograms::fill_histograms(std::vector<Int_t> v_id, std::vector<Do
  */
 void graphs::Histograms::fill_results(std::vector<Int_t> v_counts)
 {
+    // corrected counts
     for (int i = 0; i < options::Options::get_instance().get_n_thresholds(); i++)
         hist_energy_central_corrected->SetBinContent((i + 1), v_counts[i]);
 }
