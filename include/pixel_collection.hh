@@ -33,6 +33,7 @@ class PixelCollection
     std::array<std::vector<int>, MAX_PSF_ELEMENTS> energy_measured;
     std::array<std::vector<int>, MAX_PSF_ELEMENTS> energy_corrected;
     std::array<std::vector<std::vector<int>>, MAX_PSF_ELEMENTS - 1> counts_and;
+    std::vector<std::vector<double>> transition_probabilities;
 
     std::shared_ptr<data::PSFInfo> psf_info;
 

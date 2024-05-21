@@ -139,6 +139,7 @@ void pixel::PixelCollection::reconstruct_spectrum(int beam_width)
 {
     int N = options::Options::get_instance().get_n_thresholds();
 
+    // get corrected counts
     for (int i = 0; i < N; i++) {
         int correction_1 = 0;
         int correction_2 = 0;
@@ -150,6 +151,22 @@ void pixel::PixelCollection::reconstruct_spectrum(int beam_width)
             correction_2 += counts_and[0][i - j][j];
 
         energy_corrected[0][i] = energy_measured[0][i] - 4 * correction_1 + 4 * correction_2 - 2 * counts_and[0][i][0];
+    }
+
+    // get transition probabilities
+    for (int i = 0; i < N; i++) {
+        std::vector<double> row;
+        row.reserve(N);
+
+        for (int j = 0; j < N; j++) {
+            double probability = 4. * counts_and[0][i][j] / energy_corrected[0][i + j];
+            if (std::isnan(probability)) probability = 0.0;
+            else if (probability > 2 || probability < 0) probability = 2;
+            row.push_back(probability);
+        }
+
+        transition_probabilities.push_back(row);
+        row.clear();
     }
 }
 
@@ -218,10 +235,7 @@ void pixel::PixelCollection::save_output()
     probabilities_file << "Bin i, Bin j, Probability\n";
     for (int i = 0; i < counts_and[0].size(); i++) {
         for (int j = 0; j < counts_and[0][i].size(); j++) {
-            double probability = 4. * counts_and[0][i][j] / energy_corrected[0][i + j];
-            if (std::isnan(probability)) probability = 0.0;
-            else if (probability > 2 || probability < 0) probability = 2;
-            probabilities_file << i << "," << j << "," << probability << "\n";
+            probabilities_file << i << "," << j << "," << transition_probabilities[i][j] << "\n";
         }
     }
 
