@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstring>
 #include <string>
 
 namespace options
@@ -15,6 +16,7 @@ class Options
     double threshold_step;
     bool verbosity;
     bool opt_verbose;
+    bool use_probabilities;
 
     Options();
 
@@ -40,5 +42,6 @@ class Options
     double get_max_threshold() const { return max_threshold; }
     double get_threshold_step() const { return threshold_step; }
     bool get_verbosity() const { return verbosity; }
+    bool get_use_probabilities() const { return use_probabilities; }
 };
 } // namespace options
