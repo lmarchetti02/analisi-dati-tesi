@@ -60,7 +60,7 @@ analysis::Analysis::~Analysis() { results_file->Close(); }
 void analysis::Analysis::show_results() const
 {
     pixel_collection->reconstruct_spectrum(info->get_beam_width());
-    pixel_collection->save_output();
+    if (!options::Options::get_instance().get_use_probabilities()) pixel_collection->save_output();
 
     hist->fill_results(pixel_collection->get_energy_corrected());
     hist->show_histograms();
