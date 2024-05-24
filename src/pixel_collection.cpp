@@ -165,8 +165,8 @@ void pixel::PixelCollection::reconstruct_spectrum(int beam_width)
 
             for (int j = 0; j < N; j++) {
                 double probability = 4. * counts_and[0][i][j] / energy_corrected[0][i + j];
-                if (std::isnan(probability)) probability = 0.0;
-                else if (probability > 2 || probability < 0) probability = 2;
+                if (std::isnan(probability) || probability < 0) probability = 0.0;
+                else if (probability > 2) probability = 2;
                 row.push_back(probability);
             }
 
