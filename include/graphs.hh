@@ -6,6 +6,7 @@
 #include "THStack.h"
 #include "data.hh"
 
+#include <fstream>
 #include <memory>
 
 namespace graphs
@@ -45,6 +46,9 @@ class Histograms
     TCanvas *canvas_reconstruction;
 
     std::shared_ptr<data::PSFInfo> psf_info;
+
+    std::fstream energy_spectrum_file;
+    std::fstream energy_spectrum_cs_file;
 
     static bool verbose;
 

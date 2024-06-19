@@ -59,6 +59,12 @@ graphs::Histograms::Histograms(int n_pixel, std::shared_ptr<data::PSFInfo> psf)
     printf("%sINFO - Histograms created.%s\n\n", INFO_COLOR, END_COLOR);
 
     this->n_pixel = n_pixel;
+
+    energy_spectrum_file.open("../plots/data/energy_spectrum.txt", std::ios::out);
+    if (!energy_spectrum_file.is_open()) throw std::runtime_error("Impossible to open energy spectrum file.");
+
+    energy_spectrum_cs_file.open("../plots/data/energy_spectrum_cs.txt", std::ios::out);
+    if (!energy_spectrum_cs_file.is_open()) throw std::runtime_error("Impossible to open energy spectrum file.");
 }
 
 /**
@@ -119,6 +125,9 @@ graphs::Histograms::~Histograms()
     canvas_reconstruction = nullptr;
 
     if (verbose) print_info("INFO - Canvases destroyed.\n");
+
+    energy_spectrum_file.close();
+    energy_spectrum_cs_file.close();
 }
 
 /**
@@ -151,6 +160,9 @@ void graphs::Histograms::fill_histograms(std::vector<Int_t> v_id, std::vector<Do
     int limit = v_energy.size();
     for (int i = 0; i < limit; i++) {
         double energy = v_energy.at(i);
+
+        if (!CS) energy_spectrum_file << energy << "\n";
+        else energy_spectrum_cs_file << energy << "\n";
 
         total_energy += energy;
         if (energy > 0) (!CS) ? hist_energy_spectrum->Fill(energy) : hist_energy_spectrum_cs->Fill(energy);
