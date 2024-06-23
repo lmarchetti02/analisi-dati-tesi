@@ -8,6 +8,7 @@
 #include <TH1.h>
 #include <algorithm>
 #include <array>
+#include <iostream>
 
 bool graphs::Histograms::verbose = false;
 
@@ -65,6 +66,20 @@ graphs::Histograms::Histograms(int n_pixel, std::shared_ptr<data::PSFInfo> psf)
 
     energy_spectrum_cs_file.open("../plots/data/energy_spectrum_cs.txt", std::ios::out);
     if (!energy_spectrum_cs_file.is_open()) throw std::runtime_error("Impossible to open energy spectrum file.");
+
+    photon_energy_file.open("../plots/data/photon_energy.txt", std::ios::out);
+    if (!photon_energy_file.is_open()) throw std::runtime_error("Impossible to open photon energy file.");
+
+    std::string root_filename = Options::get_instance().get_filename();
+    root_filename.erase(root_filename.length() - 8, 8);
+
+    std::string filename_counts = "../plots/data/counts/counts_" + root_filename + ".txt";
+    counts_file.open(filename_counts, std::ios::out);
+    if (!counts_file.is_open()) throw std::runtime_error("Impossible to open counts file.");
+
+    std::string filename_reconstruction = "../plots/data/counts/reconstruction_" + root_filename + ".txt";
+    reconstruction_file.open(filename_reconstruction, std::ios::out);
+    if (!reconstruction_file.is_open()) throw std::runtime_error("Impossible to open reconstruction file.");
 }
 
 /**
@@ -128,6 +143,9 @@ graphs::Histograms::~Histograms()
 
     energy_spectrum_file.close();
     energy_spectrum_cs_file.close();
+    photon_energy_file.close();
+    counts_file.close();
+    reconstruction_file.close();
 }
 
 /**
@@ -139,8 +157,10 @@ graphs::Histograms::~Histograms()
  */
 void graphs::Histograms::fill_psf_histograms(int id, double energy)
 {
-    if (id == psf_info->id_pixel_0) hist_energy_central->Fill(energy);
-    else if (std::find(psf_info->id_pixel_t.begin(), psf_info->id_pixel_t.end(), id) != psf_info->id_pixel_t.end())
+    if (id == psf_info->id_pixel_0) {
+        hist_energy_central->Fill(energy);
+        counts_file << energy << std::endl;
+    } else if (std::find(psf_info->id_pixel_t.begin(), psf_info->id_pixel_t.end(), id) != psf_info->id_pixel_t.end())
         hist_energy_t->Fill(energy);
     else if (std::find(psf_info->id_pixel_tr.begin(), psf_info->id_pixel_tr.end(), id) != psf_info->id_pixel_tr.end())
         hist_energy_tr->Fill(energy);
@@ -196,9 +216,15 @@ void graphs::Histograms::fill_histograms(std::vector<Int_t> v_id, std::vector<Do
  */
 void graphs::Histograms::fill_results(std::vector<Int_t> v_counts)
 {
+    double max = options::Options::get_instance().get_max_threshold();
+    int N = options::Options::get_instance().get_n_thresholds();
+    double step = max / N;
+
     // corrected counts
-    for (int i = 0; i < options::Options::get_instance().get_n_thresholds(); i++)
+    for (int i = 0; i < N; i++) {
         hist_energy_central_corrected->SetBinContent((i + 1), v_counts[i]);
+        reconstruction_file << (i + 1) * step << "  " << v_counts[i] << std::endl;
+    }
 }
 
 void graphs::Histograms::fill_reference(std::vector<Int_t> v_id, std::vector<Double_t> v_energy)
@@ -208,6 +234,18 @@ void graphs::Histograms::fill_reference(std::vector<Int_t> v_id, std::vector<Dou
     for (int i = 0; i < v_id.size(); i++) {
         if (v_id[i] == id_0 && v_energy[i] > 0) hist_energy_central_corrected_reference->Fill(v_energy[i]);
     }
+}
+
+/**
+ * Function for filling the histogram with
+ * the original energy spectrum.
+ *
+ * @param[in] energy The energy of the photon.
+ */
+void graphs::Histograms::fill_photon_energy(Double_t energy)
+{
+    hist_photon_energy->Fill(energy);
+    photon_energy_file << energy << std::endl;
 }
 
 /**

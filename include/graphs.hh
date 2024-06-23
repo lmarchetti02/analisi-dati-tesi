@@ -49,6 +49,9 @@ class Histograms
 
     std::fstream energy_spectrum_file;
     std::fstream energy_spectrum_cs_file;
+    std::fstream counts_file;
+    std::fstream reconstruction_file;
+    std::fstream photon_energy_file;
 
     static bool verbose;
 
@@ -61,7 +64,7 @@ class Histograms
     void fill_histograms(std::vector<Int_t> v_id, std::vector<Double_t> v_energy, bool CS, bool print = false);
     void fill_results(std::vector<Int_t> v_counts);
     void fill_reference(std::vector<Int_t> v_id, std::vector<Double_t> v_energy);
-    void fill_photon_energy(Double_t energy) { hist_photon_energy->Fill(energy); }
+    void fill_photon_energy(Double_t energy);
     void show_histograms();
 
     // Set verbosity of the class.
