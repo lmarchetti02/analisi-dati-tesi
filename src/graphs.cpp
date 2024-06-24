@@ -71,7 +71,7 @@ graphs::Histograms::Histograms(int n_pixel, std::shared_ptr<data::PSFInfo> psf)
     if (!photon_energy_file.is_open()) throw std::runtime_error("Impossible to open photon energy file.");
 
     std::string root_filename = Options::get_instance().get_filename();
-    root_filename.erase(root_filename.length() - 8, 8);
+    root_filename.erase(root_filename.length() - 9, 9);
 
     std::string filename_counts = "../plots/data/counts/counts_" + root_filename + ".txt";
     counts_file.open(filename_counts, std::ios::out);
@@ -227,6 +227,13 @@ void graphs::Histograms::fill_results(std::vector<Int_t> v_counts)
     }
 }
 
+/**
+ * Function for filling the histogram with the results
+ * of the reference algorithm.
+ *
+ * @param[in] v_id The vector containing the pixel IDs.
+ * @param[in] v_energy The vector containing the pixel energies.
+ */
 void graphs::Histograms::fill_reference(std::vector<Int_t> v_id, std::vector<Double_t> v_energy)
 {
     Int_t id_0 = (n_pixel / 2) * (1 + n_pixel);
